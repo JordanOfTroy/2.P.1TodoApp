@@ -43,19 +43,32 @@ let testData = [
     }
 ]
 
+function listObj (str, arr) {
+    this.title = str,
+    this.itesm = arr
+}
+
+let listData = []
+
 function getInputValue () {
     let currentInputValue = theInput.value
     theInput.value = ""
     return currentInputValue
 }
 
+function createNewListObject (str) {
+    let newObj = new listObj(str, [])
+    return newObj
+}
+
 
 theButton.addEventListener('click', (event) => {
     let currentListItem = getInputValue()
-    console.log('theInput:', currentListItem)
+    let currentListObject = createNewListObject(currentListItem)
+    listData.push(currentListObject)
 
+    console.log('listData:', listData)
 })
-
 
 
 // function showshit () {
