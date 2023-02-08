@@ -8,4 +8,12 @@ body {
   background-color: white;
   margin: 50px auto;
   padding: 50px;
+}
+
+.listCard {
+  background-color: white;
+  margin: 2em auto;
+  padding: 1em;
+  box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
 }/*# sourceMappingURL=style.css.map */
