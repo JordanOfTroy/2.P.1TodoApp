@@ -45,7 +45,7 @@ let testData = [
 
 function listObj (str, arr = []) {
     this.title = str,
-    this.itesm = arr
+    this.items = arr
 }
 
 let listData = []
@@ -63,39 +63,51 @@ function createNewListObject (str) {
 
 
 theButton.addEventListener('click', (event) => {
+    // console.log('listData B4:', listData)
     let currentListItem = getInputValue()
     let currentListObject = createNewListObject(currentListItem)
     listData.push(currentListObject)
+    
+    // console.log('listData AFT:', listData)
+    // console.log('~~~~~~~~')
+    showLists(listData)
 
-    console.log('listData:', listData)
 })
 
-// function to itterate through data structure and retuen STRING of HTML
-// "I may vomit"
-
+function clearOldList () {
+    theList.innerHTML = ''
+}
 
 function showLists (arr) {
-    console.log(arr)
-    console.log('~~~~~~~')
+
+    clearOldList()
 
     arr.forEach((ele, i) => {
-        console.log(ele)
-        console.log('-----')
+        // console.log(ele.items.length)
+        // console.log('-----')
+        let listTitleDiv = document.createElement("div")
+        let divID = `ListTitleDiv_${i}`
+        listTitleDiv.setAttribute('id', divID)
+        listTitleDiv.setAttribute('class', 'ListTitleDiv')
         let listTitle = document.createElement("h1")
         let eleTitle = ele.title
         let eleID = eleTitle + '_id' + i
         listTitle.innerText = eleTitle
         listTitle.setAttribute('id', eleID)
-        document.getElementById('container1').appendChild(listTitle)
-
-        ele.items.forEach((item) => {
-            console.log(item)
-            console.log(item.item)
-            console.log('...')
+        listTitle.setAttribute('class', 'listTitle')
+        document.getElementById('todoList').appendChild(listTitleDiv)
+        document.getElementById(`ListTitleDiv_${i}`).appendChild(listTitle)
+        
+        ele.items.forEach((item, i) => {
+            // console.log(item)
+            // console.log(item.item)
+            // console.log('...')
             let listItem = document.createElement("p")
             listItem.innerText = item.item
-            console.log(listItem)
-            document.getElementById(eleID).appendChild(listItem)
+            listItem.setAttribute('id', `${eleID}_i`)
+            listItem.setAttribute('class', 'listItem')
+            // console.log(listItem)
+            document.getElementById(divID).appendChild(listItem)
         })
         
     })
