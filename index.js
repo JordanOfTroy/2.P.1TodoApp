@@ -43,7 +43,7 @@ let testData = [
     }
 ]
 
-function listObj (str, arr) {
+function listObj (str, arr = []) {
     this.title = str,
     this.itesm = arr
 }
@@ -57,7 +57,7 @@ function getInputValue () {
 }
 
 function createNewListObject (str) {
-    let newObj = new listObj(str, [])
+    let newObj = new listObj(str)
     return newObj
 }
 
@@ -70,6 +70,40 @@ theButton.addEventListener('click', (event) => {
     console.log('listData:', listData)
 })
 
+// function to itterate through data structure and retuen STRING of HTML
+// "I may vomit"
+
+
+function showLists (arr) {
+    console.log(arr)
+    console.log('~~~~~~~')
+
+    arr.forEach((ele, i) => {
+        console.log(ele)
+        console.log('-----')
+        let listTitle = document.createElement("h1")
+        let eleTitle = ele.title
+        let eleID = eleTitle + '_id' + i
+        listTitle.innerText = eleTitle
+        listTitle.setAttribute('id', eleID)
+        document.getElementById('container1').appendChild(listTitle)
+
+        ele.items.forEach((item) => {
+            console.log(item)
+            console.log(item.item)
+            console.log('...')
+            let listItem = document.createElement("p")
+            listItem.innerText = item.item
+            console.log(listItem)
+            document.getElementById(eleID).appendChild(listItem)
+        })
+        
+    })
+
+
+}
+
+showLists(testData)
 
 // function showshit () {
 //     console.log(theList)
