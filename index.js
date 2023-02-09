@@ -1,5 +1,5 @@
 let theInput = document.getElementById('todoInput')
-let theButton = document.getElementById('inputButton')
+let theBigButton = document.getElementById('inputButton')
 let theList = document.getElementById('todoList')
 
 let testData = [
@@ -38,7 +38,7 @@ let testData = [
         ]
     },
     {
-        title: "empty list",
+        title: "empty_list",
         items: []
     }
 ]
@@ -62,49 +62,85 @@ function createNewListObject (str) {
 }
 
 
-theButton.addEventListener('click', (event) => {
-    // console.log('listData B4:', listData)
+theBigButton.addEventListener('click', (event) => {
     let currentListItem = getInputValue()
     let currentListObject = createNewListObject(currentListItem)
     listData.push(currentListObject)
     
-    // console.log('listData AFT:', listData)
-    // console.log('~~~~~~~~')
     showLists(listData)
-    
 })
+
 
 function clearOldList () {
     theList.innerHTML = ''
 }
 
-function createListDiv (ind, ele) {
+
+function createListDiv (ele, ind) {
     let listTitleDiv = document.createElement("div")
     let divID = `ListDiv_${ind}`
+
     theList.appendChild(listTitleDiv)
     listTitleDiv.setAttribute('id', divID)
     listTitleDiv.setAttribute('class', 'listCard')
+
     createListTitle(divID, ind, ele)
     return listTitleDiv
 }
 
+
 function createListTitle (divID, i, ele) {
+    let titleRow = document.createElement('div')
+    let rowID = `row_${i}`
+
     let listTitle = document.createElement("h1")
     let eleTitle = ele.title
-    let eleID = eleTitle + '_id' + i
+    let eleID = `${eleTitle}_id${i}`
+
+    titleRow.setAttribute('id', `${rowID}`)
+    titleRow.setAttribute('class', 'listHeader')
+
     listTitle.innerText = eleTitle
     listTitle.setAttribute('id', eleID)
     listTitle.setAttribute('class', 'listTitle')
-    document.getElementById(divID).appendChild(listTitle)
+
+    document.getElementById(divID).appendChild(titleRow)
+    document.getElementById(rowID).appendChild(listTitle)
+    document.getElementById(rowID).appendChild(addlistInputDiv(i))
     createListItems(ele, eleID, divID)
 }
+
+
+function addlistInputDiv (i) {
+    let inputDiv = document.createElement('div')
+    let inputID = `inputDiv_${i}`
+    inputDiv.setAttribute('id', `${inputID}`)
+
+    let theInput = document.createElement('input')
+    theInput.setAttribute('placeholder', 'Add a new list item...')
+
+    let button = document.createElement('button')
+    let buttonID = `button_${i}`
+    button.innerText = '+ Add'
+    button.setAttribute('id', `${buttonID}`)
+    button.addEventListener('click', (event) => {
+        console.dir(event.target.id)
+    })
+
+    inputDiv.appendChild(theInput)
+    inputDiv.appendChild(button)
+    return inputDiv
+}
+
 
 function createListItems (ele, eleID, divID) {
     ele.items.forEach((item, i) => {
         let listItem = document.createElement("p")
+
         listItem.innerText = item.item
         listItem.setAttribute('id', `${eleID}_${i}`)
         listItem.setAttribute('class', 'listItem')
+
         document.getElementById(divID).appendChild(listItem)
     })
 }
@@ -113,34 +149,7 @@ function createListItems (ele, eleID, divID) {
 function showLists (arr) {
     clearOldList()
     arr.forEach((ele, i) => {
-        createListDiv(i, ele)
-        // console.log(ele.items.length)
-        // console.log('-----')
-        // let listTitleDiv = document.createElement("div")
-        // let divID = `ListTitleDiv_${i}`
-        // document.getElementById('todoList').appendChild(listTitleDiv)
-        // listTitleDiv.setAttribute('id', divID)
-        // listTitleDiv.setAttribute('class', 'listCard')
-
-        // let listTitle = document.createElement("h1")
-        // let eleTitle = ele.title
-        // let eleID = eleTitle + '_id' + i
-        // listTitle.innerText = eleTitle
-        // listTitle.setAttribute('id', eleID)
-        // listTitle.setAttribute('class', 'listTitle')
-        // document.getElementById(divID).appendChild(listTitle)
-        
-        // ele.items.forEach((item, i) => {
-        //     // console.log(item)
-        //     // console.log(item.item)
-        //     // console.log('...')
-        //     let listItem = document.createElement("p")
-        //     listItem.innerText = item.item
-        //     listItem.setAttribute('id', `${eleID}_i`)
-        //     listItem.setAttribute('class', 'listItem')
-        //     // console.log(listItem)
-        //     document.getElementById(divID).appendChild(listItem)
-        // })
+        createListDiv(ele, i)
     })
 }
 
