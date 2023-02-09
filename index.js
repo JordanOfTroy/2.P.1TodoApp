@@ -50,9 +50,9 @@ function listObj (str, arr = []) {
 
 let listData = []
 
-function getInputValue () {
-    let currentInputValue = theInput.value
-    theInput.value = ""
+function getInputValue (ele) {
+    let currentInputValue = ele.value
+    ele.value = ""
     return currentInputValue
 }
 
@@ -63,7 +63,7 @@ function createNewListObject (str) {
 
 
 theBigButton.addEventListener('click', (event) => {
-    let currentListItem = getInputValue()
+    let currentListItem = getInputValue(theInput)
     let currentListObject = createNewListObject(currentListItem)
     listData.push(currentListObject)
     
@@ -106,12 +106,12 @@ function createListTitle (divID, i, ele) {
 
     document.getElementById(divID).appendChild(titleRow)
     document.getElementById(rowID).appendChild(listTitle)
-    document.getElementById(rowID).appendChild(addlistInputDiv(i))
+    document.getElementById(rowID).appendChild(addlistInputDiv(i, ele, eleID, divID))
     createListItems(ele, eleID, divID)
 }
 
 
-function addlistInputDiv (i) {
+function addlistInputDiv (i, ele, eleID, divID) {
     let inputDiv = document.createElement('div')
     let inputID = `inputDiv_${i}`
     inputDiv.setAttribute('id', `${inputID}`)
@@ -124,13 +124,19 @@ function addlistInputDiv (i) {
     button.innerText = '+ Add'
     button.setAttribute('id', `${buttonID}`)
     button.addEventListener('click', (event) => {
-        console.dir(event.target.id)
+        let addedItem = getInputValue(theInput)
+        ele.items.push({
+            item: addedItem,
+            checked: false
+        })
+        showLists(listData)
     })
-
+    
     inputDiv.appendChild(theInput)
     inputDiv.appendChild(button)
     return inputDiv
 }
+
 
 
 function createListItems (ele, eleID, divID) {
@@ -153,7 +159,11 @@ function showLists (arr) {
     })
 }
 
-showLists(testData)
+// showLists(testData)
 
+function nolists() {
+    return '<h1>Add a list</h1>'
+}
 
+listData.length > 0 ? showLists(listData) : nolists()
 
