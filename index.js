@@ -104,7 +104,7 @@ function createListTitle (divID, i, ele) {
     listTitle.setAttribute('id', eleID)
     listTitle.setAttribute('class', 'listTitle')
 
-    titleRow.appendChild(createUtilities(i))
+    titleRow.appendChild(createUtilities(i, 'xl'))
 
     let toolsDiv = document.createElement('div')
     let toolsDiviD = `tools_${i}`
@@ -119,7 +119,7 @@ function createListTitle (divID, i, ele) {
 }
 
 
-function createUtilities (i) {
+function createUtilities (i, size) {
     let utilDiv = document.createElement('div')
     let uitilIdvID = `utils_${i}`
     utilDiv.setAttribute('id', `${uitilIdvID}`)
@@ -128,17 +128,17 @@ function createUtilities (i) {
     let editbutton = document.createElement('i')
     let edifButtonID = `editButt_${i}`
     editbutton.setAttribute('id', `${edifButtonID}`)
-    editbutton.setAttribute('class', 'fa-solid fa-pen-to-square fa-xl utilButton mx-3')
-    editbutton.addEventListener('click', (e) => {
-        editeListTitle(e)
+    editbutton.setAttribute('class', `fa-solid fa-pen-to-square fa-${size} utilButton mx-3`)
+    editbutton.addEventListener('click', (e, i) => {
+        handleEdit(e, i)
     })
 
     let deleteButton = document.createElement('i')
     let deleteButtonID = `deleteButt_${i}`
     deleteButton.setAttribute('id', `${deleteButtonID}`)
-    deleteButton.setAttribute('class', 'fa-solid fa-trash fa-xl utilButton mx-3')
-    deleteButton.addEventListener('click', (e) => {
-        deleteList(e)
+    deleteButton.setAttribute('class', `fa-solid fa-trash fa-${size} utilButton mx-3`)
+    deleteButton.addEventListener('click', (e, i) => {
+        hadnleDelete(e, i)
     })
 
     utilDiv.appendChild(editbutton)
@@ -155,6 +155,7 @@ function addlistInputDiv (i, ele, eleID, divID) {
 
     let theInput = document.createElement('input')
     theInput.setAttribute('placeholder', 'Add a new list item...')
+    theInput.setAttribute('class', 'my-3')
 
     let button = document.createElement('button')
     let buttonID = `button_${i}`
@@ -178,23 +179,29 @@ function addlistInputDiv (i, ele, eleID, divID) {
 
 function createListItems (ele, eleID, divID) {
     ele.items.forEach((item, i) => {
-        let listItem = document.createElement("p")
+        let listItem = document.createElement("div")
+        let itemName = document.createElement('p')
 
-        listItem.innerText = item.item
+        itemName.innerText = item.item
         listItem.setAttribute('id', `${eleID}_${i}`)
         listItem.setAttribute('class', 'listItem')
 
+
+
         document.getElementById(divID).appendChild(listItem)
+        listItem.appendChild(itemName)
+        listItem.appendChild(createUtilities(i, 'md'))
+        
     })
 }
 
 
-function editeListTitle (event) {
+function handleEdit (event, i) {
     console.log('you are ediging the list title.', event.target)
     // bring up modal with input and button
 }
 
-function deleteList (event) {
+function hadnleDelete (event, i) {
     console.log('you are deleting the list!', event.target)
     // buring up modal to confirm deletion 
 }

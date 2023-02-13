@@ -23,7 +23,13 @@ body {
   align-items: center;
   justify-content: flex-end;
 }
+.listCard .listItem {
+  display: flex;
+}
 
 .utilButton {
   margin: 0px 5px;
+}
+.utilButton:hover {
+  cursor: pointer;
 }/*# sourceMappingURL=style.css.map */
