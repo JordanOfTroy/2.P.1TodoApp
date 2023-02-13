@@ -66,7 +66,7 @@ theBigButton.addEventListener('click', (event) => {
     let currentListItem = getInputValue(theInput)
     let currentListObject = createNewListObject(currentListItem)
     listData.push(currentListObject)
-    
+    console.log(listData)
     showLists(listData)
 })
 
