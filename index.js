@@ -104,10 +104,35 @@ function createListTitle (divID, i, ele) {
     listTitle.setAttribute('id', eleID)
     listTitle.setAttribute('class', 'listTitle')
 
+    let utilities = createUtilities(i)
+
     document.getElementById(divID).appendChild(titleRow)
     document.getElementById(rowID).appendChild(listTitle)
+    document.getElementById(rowID).appendChild(utilities)
     document.getElementById(rowID).appendChild(addlistInputDiv(i, ele, eleID, divID))
     createListItems(ele, eleID, divID)
+}
+
+
+function createUtilities (i) {
+    let utilDiv = document.createElement('div')
+    let uitilIdvID = `utils_${i}`
+    utilDiv.setAttribute('id', `${uitilIdvID}`)
+
+    let editbutton = document.createElement('i')
+    let edifButtonID = `editButt_${i}`
+    editbutton.setAttribute('id', `${edifButtonID}`)
+    editbutton.setAttribute('class', 'fa-solid fa-pen-to-square utilButton')
+
+    let deleteButton = document.createElement('i')
+    let deleteButtonID = `deleteButt_${i}`
+    deleteButton.setAttribute('id', `${deleteButtonID}`)
+    deleteButton.setAttribute('class', 'fa-solid fa-trash utilButton')
+
+    utilDiv.appendChild(editbutton)
+    utilDiv.appendChild(deleteButton)
+    
+    return utilDiv
 }
 
 
@@ -121,7 +146,7 @@ function addlistInputDiv (i, ele, eleID, divID) {
 
     let button = document.createElement('button')
     let buttonID = `button_${i}`
-    button.innerText = '+ Add'
+    button.innerHTML = '<i class="fa-solid fa-plus"></i> Add'
     button.setAttribute('id', `${buttonID}`)
     button.addEventListener('click', (event) => {
         let addedItem = getInputValue(theInput)
@@ -159,11 +184,7 @@ function showLists (arr) {
     })
 }
 
-// showLists(testData)
 
-function nolists() {
-    return '<h1>Add a list</h1>'
-}
 
-listData.length > 0 ? showLists(listData) : nolists()
+listData.length > 0 ? showLists(listData) : showLists(testData)
 
