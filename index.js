@@ -104,12 +104,17 @@ function createListTitle (divID, i, ele) {
     listTitle.setAttribute('id', eleID)
     listTitle.setAttribute('class', 'listTitle')
 
-    let utilities = createUtilities(i)
+    titleRow.appendChild(createUtilities(i))
 
+    let toolsDiv = document.createElement('div')
+    let toolsDiviD = `tools_${i}`
+    toolsDiv.setAttribute('id', `${toolsDiviD}`)
+    toolsDiv.setAttribute('class','tools')
+    toolsDiv.appendChild(addlistInputDiv(i, ele, eleID, divID))
+    
     document.getElementById(divID).appendChild(titleRow)
     document.getElementById(rowID).appendChild(listTitle)
-    document.getElementById(rowID).appendChild(utilities)
-    document.getElementById(rowID).appendChild(addlistInputDiv(i, ele, eleID, divID))
+    document.getElementById(divID).appendChild(toolsDiv)
     createListItems(ele, eleID, divID)
 }
 
@@ -118,16 +123,23 @@ function createUtilities (i) {
     let utilDiv = document.createElement('div')
     let uitilIdvID = `utils_${i}`
     utilDiv.setAttribute('id', `${uitilIdvID}`)
+    utilDiv.setAttribute('class','utils mx-3')
 
     let editbutton = document.createElement('i')
     let edifButtonID = `editButt_${i}`
     editbutton.setAttribute('id', `${edifButtonID}`)
-    editbutton.setAttribute('class', 'fa-solid fa-pen-to-square utilButton')
+    editbutton.setAttribute('class', 'fa-solid fa-pen-to-square fa-xl utilButton mx-3')
+    editbutton.addEventListener('click', (e) => {
+        editeListTitle(e)
+    })
 
     let deleteButton = document.createElement('i')
     let deleteButtonID = `deleteButt_${i}`
     deleteButton.setAttribute('id', `${deleteButtonID}`)
-    deleteButton.setAttribute('class', 'fa-solid fa-trash utilButton')
+    deleteButton.setAttribute('class', 'fa-solid fa-trash fa-xl utilButton mx-3')
+    deleteButton.addEventListener('click', (e) => {
+        deleteList(e)
+    })
 
     utilDiv.appendChild(editbutton)
     utilDiv.appendChild(deleteButton)
@@ -174,6 +186,17 @@ function createListItems (ele, eleID, divID) {
 
         document.getElementById(divID).appendChild(listItem)
     })
+}
+
+
+function editeListTitle (event) {
+    console.log('you are ediging the list title.', event.target)
+    // bring up modal with input and button
+}
+
+function deleteList (event) {
+    console.log('you are deleting the list!', event.target)
+    // buring up modal to confirm deletion 
 }
 
 
