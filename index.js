@@ -76,7 +76,6 @@ theBigButton.addEventListener('click', (event) => {
     let currentListItem = getInputValue(theInput)
     let currentListObject = createNewListObject(currentListItem)
     listData.push(currentListObject)
-    console.log(listData)
     showLists(listData)
 })
 
@@ -123,13 +122,13 @@ function createListTitle (divID, i, ele, arr) {
     listTitle.innerText = eleTitle
     listTitle.setAttribute('id', eleID)
     listTitle.setAttribute('class', 'listTitle')
-    titleRow.appendChild(createUtilities(i, 'xl', divID, ele, arr))
+    titleRow.appendChild(createUtilities(i, 'xl', divID, ele, arr, 'list'))
 
     let toolsDiv = document.createElement('div')
     let toolsDiviD = `tools_${i}`
     toolsDiv.setAttribute('id', `${toolsDiviD}`)
     toolsDiv.setAttribute('class','tools')
-    toolsDiv.appendChild(addlistInputDiv(i, ele, eleID, divID))
+    toolsDiv.appendChild(addlistInputDiv(i, ele, eleID, divID, 'list'))
     
     document.getElementById(divID).appendChild(titleRow)
     document.getElementById(rowID).appendChild(listTitle)
@@ -138,7 +137,7 @@ function createListTitle (divID, i, ele, arr) {
 }
 
 
-function createUtilities (i, size, divID, ele, arr) {
+function createUtilities (i, size, divID, ele, arr, editType) {
     let utilDiv = document.createElement('div')
     let uitilIdvID = `utils_${i}`
     utilDiv.setAttribute('id', `${uitilIdvID}`)
@@ -149,7 +148,8 @@ function createUtilities (i, size, divID, ele, arr) {
     editbutton.setAttribute('id', `${edifButtonID}`)
     editbutton.setAttribute('class', `fa-solid fa-pen-to-square fa-${size} utilButton mx-3`)
     editbutton.addEventListener('click', (e) => {
-        handleEdit(e, i, divID, ele)
+        
+        handleEdit(e, i, divID, ele, arr, editType)
     })
 
     let deleteButton = document.createElement('i')
@@ -187,7 +187,6 @@ function addlistInputDiv (i, ele, eleID, divID) {
             checked: false,
             isEditing: false
         })
-        console.log(listData)
         showLists(listData)
     })
     
@@ -227,10 +226,23 @@ function createListItems (ele, eleID, divID, arr) {
 }
 
 
-function handleEdit (event, i, divID, ele) {
+function handleEdit (event, i, divID, ele, arr, editType) {
 
-    let itemTobeEdited = ele.items[i] // getting item object
-    itemTobeEdited.isEditing = true
+    console.log('event', event.target.id)
+    console.log('i', i)
+    console.log('divID', divID)
+    console.log('ele', ele)
+    console.log('arr', arr)
+    console.log('editType', editType)
+   console.log(`~~~~~~~~`)
+
+    if (editType === 'list') {
+        console.log('LISTY BOI')
+    } else {
+        let itemTobeEdited = ele.items[i] // getting item object
+        itemTobeEdited.isEditing = true
+    }
+
     
     showLists(listData)
 }
@@ -256,7 +268,7 @@ function showLists (arr) {
 function showEmpty () {
     let message = document.querySelector('#todoList')
     let messageText = document.createElement('h1')
-    messageText.innerText = 'Please add a list'
+    messageText.innerText = 'Please add a To-do'
     message.appendChild(messageText)
 }
 
