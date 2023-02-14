@@ -8,44 +8,54 @@ let testData = [
         items: [
             {
                 item: 'millk',
-                checked: false
+                checked: false,
+                isEditing: false
             },
             {
                 item: 'bread',
-                checked: false
+                checked: false,
+                isEditing: false
             },
             {
                 item: 'eggs',
-                checked: false
+                checked: false,
+                isEditing: false
             },
-        ]
+        ],
+        isEditing: false
     },
     {
         title: "chores",
         items: [
             {
                 item: 'clean the gutters',
-                checked: false
+                checked: false,
+                isEditing: false
             },
             {
                 item: 'mow the lawn',
-                checked: false
+                checked: false,
+                isEditing: false
             },
             {
                 item: 'clean out the garage',
-                checked: false
+                checked: false,
+                isEditing: false
             },
-        ]
+        ],
+        isEditing: false
     },
     {
         title: "empty_list",
-        items: []
+        items: [],
+        isEditing: false
     }
 ]
 
-function listObj (str, arr = []) {
+function listObj (str, arr = [], bool = false) {
     this.title = str,
-    this.items = arr
+    this.items = arr,
+    this.isEditing = bool
 }
 
 let listData = []
@@ -85,6 +95,16 @@ function createListDiv (ele, ind) {
     listTitleDiv.setAttribute('class', 'listCard')
 
     createListTitle(divID, ind, ele)
+
+    //trying new shit
+
+    // let items = ele.items
+
+    // for (let item in items) {
+    //     console.log(item)
+    // }
+
+    //--------
     return listTitleDiv
 }
 
@@ -104,7 +124,7 @@ function createListTitle (divID, i, ele) {
     listTitle.setAttribute('id', eleID)
     listTitle.setAttribute('class', 'listTitle')
 
-    titleRow.appendChild(createUtilities(i, 'xl'))
+    titleRow.appendChild(createUtilities(i, 'xl', divID, ele))
 
     let toolsDiv = document.createElement('div')
     let toolsDiviD = `tools_${i}`
@@ -119,7 +139,7 @@ function createListTitle (divID, i, ele) {
 }
 
 
-function createUtilities (i, size) {
+function createUtilities (i, size, divID, ele) {
     let utilDiv = document.createElement('div')
     let uitilIdvID = `utils_${i}`
     utilDiv.setAttribute('id', `${uitilIdvID}`)
@@ -129,8 +149,8 @@ function createUtilities (i, size) {
     let edifButtonID = `editButt_${i}`
     editbutton.setAttribute('id', `${edifButtonID}`)
     editbutton.setAttribute('class', `fa-solid fa-pen-to-square fa-${size} utilButton mx-3`)
-    editbutton.addEventListener('click', (e, i) => {
-        handleEdit(e, i)
+    editbutton.addEventListener('click', (e) => {
+        handleEdit(e, i, divID, ele)
     })
 
     let deleteButton = document.createElement('i')
@@ -165,8 +185,10 @@ function addlistInputDiv (i, ele, eleID, divID) {
         let addedItem = getInputValue(theInput)
         ele.items.push({
             item: addedItem,
-            checked: false
+            checked: false,
+            isEditing: false
         })
+        console.log(listData)
         showLists(listData)
     })
     
@@ -179,30 +201,50 @@ function addlistInputDiv (i, ele, eleID, divID) {
 
 function createListItems (ele, eleID, divID) {
     ele.items.forEach((item, i) => {
+        let itemElement = !item.isEditing ? 'p' : 'input'
         let listItem = document.createElement("div")
-        let itemName = document.createElement('p')
+        let itemName = document.createElement(`${itemElement}`)
 
+        if (item.isEditing) {
+            itemName.setAttribute('placeholder', `edit ${item.item}...`)
+            itemName.setAttribute('class', 'edit_item_input')
+            itemName.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') {
+                    let newValue = itemName.value
+                    console.log(newValue)
+                    console.log(item.item)
+                    item.item = newValue
+                    item.isEditing = false
+                    showLists(listData)
+                }
+            })
+        }
         itemName.innerText = item.item
-        listItem.setAttribute('id', `${eleID}_${i}`)
+        listItem.setAttribute('id', `${eleID}_item_id${i}`)
         listItem.setAttribute('class', 'listItem')
-
-
 
         document.getElementById(divID).appendChild(listItem)
         listItem.appendChild(itemName)
-        listItem.appendChild(createUtilities(i, 'md'))
-        
+        listItem.appendChild(createUtilities(i, 'md', divID, ele))
     })
 }
 
 
-function handleEdit (event, i) {
-    console.log('you are ediging the list title.', event.target)
-    // bring up modal with input and button
+function handleEdit (event, i, divID, ele) {
+    // console.log('event,target:', event.target)
+    // console.log('i:', i)
+    // console.log('divID:', divID)
+    // console.log('ele:', ele)
+    
+    let itemTobeEdited = ele.items[i] // getting item object
+    itemTobeEdited.isEditing = true
+
+
+
+    showLists(listData)
 }
 
-function hadnleDelete (event, i) {
-    console.log('you are deleting the list!', event.target)
+function hadnleDelete (event, i, divID, ele) {
     // buring up modal to confirm deletion 
 }
 
@@ -210,10 +252,10 @@ function hadnleDelete (event, i) {
 function showLists (arr) {
     clearOldList()
     arr.forEach((ele, i) => {
+        // console.log(ele)
         createListDiv(ele, i)
     })
 }
-
 
 
 listData.length > 0 ? showLists(listData) : showLists(testData)
