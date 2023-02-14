@@ -86,7 +86,7 @@ function clearOldList () {
 }
 
 
-function createListDiv (ele, ind) {
+function createListDiv (ele, ind, arr) {
     let listTitleDiv = document.createElement("div")
     let divID = `ListDiv_${ind}`
 
@@ -94,7 +94,7 @@ function createListDiv (ele, ind) {
     listTitleDiv.setAttribute('id', divID)
     listTitleDiv.setAttribute('class', 'listCard')
 
-    createListTitle(divID, ind, ele)
+    createListTitle(divID, ind, ele, arr)
 
     //trying new shit
 
@@ -109,7 +109,7 @@ function createListDiv (ele, ind) {
 }
 
 
-function createListTitle (divID, i, ele) {
+function createListTitle (divID, i, ele, arr) {
     let titleRow = document.createElement('div')
     let rowID = `row_${i}`
 
@@ -123,8 +123,7 @@ function createListTitle (divID, i, ele) {
     listTitle.innerText = eleTitle
     listTitle.setAttribute('id', eleID)
     listTitle.setAttribute('class', 'listTitle')
-
-    titleRow.appendChild(createUtilities(i, 'xl', divID, ele))
+    titleRow.appendChild(createUtilities(i, 'xl', divID, ele, arr))
 
     let toolsDiv = document.createElement('div')
     let toolsDiviD = `tools_${i}`
@@ -135,11 +134,11 @@ function createListTitle (divID, i, ele) {
     document.getElementById(divID).appendChild(titleRow)
     document.getElementById(rowID).appendChild(listTitle)
     document.getElementById(divID).appendChild(toolsDiv)
-    createListItems(ele, eleID, divID)
+    createListItems(ele, eleID, divID, arr)
 }
 
 
-function createUtilities (i, size, divID, ele) {
+function createUtilities (i, size, divID, ele, arr) {
     let utilDiv = document.createElement('div')
     let uitilIdvID = `utils_${i}`
     utilDiv.setAttribute('id', `${uitilIdvID}`)
@@ -157,8 +156,8 @@ function createUtilities (i, size, divID, ele) {
     let deleteButtonID = `deleteButt_${i}`
     deleteButton.setAttribute('id', `${deleteButtonID}`)
     deleteButton.setAttribute('class', `fa-solid fa-trash fa-${size} utilButton mx-3`)
-    deleteButton.addEventListener('click', (e, i) => {
-        hadnleDelete(e, i)
+    deleteButton.addEventListener('click', (e) => {
+        hadnleDelete(e, i, divID, ele, arr)
     })
 
     utilDiv.appendChild(editbutton)
@@ -199,7 +198,7 @@ function addlistInputDiv (i, ele, eleID, divID) {
 
 
 
-function createListItems (ele, eleID, divID) {
+function createListItems (ele, eleID, divID, arr) {
     ele.items.forEach((item, i) => {
         let itemElement = !item.isEditing ? 'p' : 'input'
         let listItem = document.createElement("div")
@@ -225,27 +224,26 @@ function createListItems (ele, eleID, divID) {
 
         document.getElementById(divID).appendChild(listItem)
         listItem.appendChild(itemName)
-        listItem.appendChild(createUtilities(i, 'md', divID, ele))
+        listItem.appendChild(createUtilities(i, 'md', divID, ele, arr))
     })
 }
 
 
 function handleEdit (event, i, divID, ele) {
-    // console.log('event,target:', event.target)
-    // console.log('i:', i)
-    // console.log('divID:', divID)
-    // console.log('ele:', ele)
-    
+
     let itemTobeEdited = ele.items[i] // getting item object
     itemTobeEdited.isEditing = true
-
-
-
+    
     showLists(listData)
 }
 
-function hadnleDelete (event, i, divID, ele) {
-    // buring up modal to confirm deletion 
+
+function hadnleDelete (event, i, divID, ele, arr) {
+    
+    let itemToBeDeleted = ele.items[i]
+    ele.items.splice(i, 1)
+
+    showLists(listData)
 }
 
 
@@ -253,7 +251,7 @@ function showLists (arr) {
     clearOldList()
     arr.forEach((ele, i) => {
         // console.log(ele)
-        createListDiv(ele, i)
+        createListDiv(ele, i, arr)
     })
 }
 
