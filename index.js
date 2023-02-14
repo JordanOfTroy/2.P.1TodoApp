@@ -205,13 +205,11 @@ function createListItems (ele, eleID, divID, arr) {
         let itemName = document.createElement(`${itemElement}`)
 
         if (item.isEditing) {
-            itemName.setAttribute('placeholder', `edit ${item.item}...`)
+            itemName.setAttribute('value', `${item.item}`)
             itemName.setAttribute('class', 'edit_item_input')
             itemName.addEventListener('keypress', (e) => {
                 if(e.key === 'Enter') {
                     let newValue = itemName.value
-                    console.log(newValue)
-                    console.log(item.item)
                     item.item = newValue
                     item.isEditing = false
                     showLists(listData)
@@ -255,6 +253,14 @@ function showLists (arr) {
     })
 }
 
+function showEmpty () {
+    let message = document.querySelector('#todoList')
+    let messageText = document.createElement('h1')
+    messageText.innerText = 'Please add a list'
+    message.appendChild(messageText)
+}
 
-listData.length > 0 ? showLists(listData) : showLists(testData)
+
+// listData.length > 0 ? showLists(listData) : showLists(testData)
+listData.length > 0 ? showLists(listData) : showEmpty()
 
