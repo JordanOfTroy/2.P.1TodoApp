@@ -111,10 +111,25 @@ function createListDiv (ele, ind, arr) {
 function createListTitle (divID, i, ele, arr) {
     let titleRow = document.createElement('div')
     let rowID = `row_${i}`
+    let itemElemet = !ele.isEditing ? 'h1' : 'input'
 
-    let listTitle = document.createElement("h1")
+    let listTitle = document.createElement(`${itemElemet}`)
     let eleTitle = ele.title
     let eleID = `${eleTitle}_id${i}`
+
+    if (itemElemet) {
+        listTitle.setAttribute('value', `${eleTitle}`)
+        listTitle.setAttribute('class', 'edit_item_input')
+        listTitle.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                console.log('you hit enter, BITCH')
+                let newTitle = listTitle.value
+                ele.title = newTitle
+                ele.isEditing = false
+                showLists(listData)
+            }
+        })
+    }
 
     titleRow.setAttribute('id', `${rowID}`)
     titleRow.setAttribute('class', 'listHeader')
