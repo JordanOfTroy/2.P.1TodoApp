@@ -1,6 +1,7 @@
 let theInput = document.getElementById('todoInput')
 let theBigButton = document.getElementById('inputButton')
 let theList = document.getElementById('todoList')
+let searchInput = document.getElementById('taskSearch')
 
 let testData = [
     {
@@ -208,6 +209,7 @@ function createListItems (ele, eleID, divID, arr) {
         let listItem = document.createElement("div")
         let itemName = document.createElement(`${itemElement}`)
         if (!item.isEditing) {
+            itemName.setAttribute('class', 'listName')
             itemName.addEventListener('click', () => {
                 let status = item.checked
                 if (status === false) {
@@ -285,6 +287,14 @@ function showEmpty () {
     messageText.innerText = 'Please add a To-do'
     message.appendChild(messageText)
 }
+
+searchInput.addEventListener('keyup', (e) => {
+    console.log(`you're searching for something...`)
+    if (e.key ==='Enter') {
+        console.log('you hit enter!')
+    }
+})
+
 
 
 // listData.length > 0 ? showLists(listData) : showLists(testData)
