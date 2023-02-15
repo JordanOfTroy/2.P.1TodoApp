@@ -157,7 +157,7 @@ function createUtilities (i, size, divID, ele, arr, editType) {
     deleteButton.setAttribute('id', `${deleteButtonID}`)
     deleteButton.setAttribute('class', `fa-solid fa-trash fa-${size} utilButton mx-3`)
     deleteButton.addEventListener('click', (e) => {
-        hadnleDelete(e, i, divID, ele, arr)
+        hadnleDelete(e, i, divID, ele, arr, editType)
     })
 
     utilDiv.appendChild(editbutton)
@@ -228,31 +228,27 @@ function createListItems (ele, eleID, divID, arr) {
 
 function handleEdit (event, i, divID, ele, arr, editType) {
 
-    console.log('event', event.target.id)
-    console.log('i', i)
-    console.log('divID', divID)
-    console.log('ele', ele)
-    console.log('arr', arr)
-    console.log('editType', editType)
-   console.log(`~~~~~~~~`)
-
     if (editType === 'list') {
-        console.log('LISTY BOI')
+        let listToBeEdited = ele
+        ele.isEditing = true
     } else {
-        let itemTobeEdited = ele.items[i] // getting item object
+        let itemTobeEdited = ele.items[i] 
         itemTobeEdited.isEditing = true
     }
 
-    
     showLists(listData)
 }
 
 
-function hadnleDelete (event, i, divID, ele, arr) {
-    
-    let itemToBeDeleted = ele.items[i]
-    ele.items.splice(i, 1)
+function hadnleDelete (event, i, divID, ele, arr, editType) {
 
+    if (editType === 'list') {
+        arr.splice(i, 1)
+    } else {
+        let itemToBeDeleted = ele.items[i]
+        ele.items.splice(i, 1)
+    }
+    
     showLists(listData)
 }
 
