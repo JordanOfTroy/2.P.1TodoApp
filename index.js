@@ -95,15 +95,6 @@ function createListDiv (ele, ind, arr) {
 
     createListTitle(divID, ind, ele, arr)
 
-    //trying new shit
-
-    // let items = ele.items
-
-    // for (let item in items) {
-    //     console.log(item)
-    // }
-
-    //--------
     return listTitleDiv
 }
 
@@ -122,7 +113,6 @@ function createListTitle (divID, i, ele, arr) {
         listTitle.setAttribute('class', 'edit_item_input')
         listTitle.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                console.log('you hit enter, BITCH')
                 let newTitle = listTitle.value
                 ele.title = newTitle
                 ele.isEditing = false
@@ -217,6 +207,20 @@ function createListItems (ele, eleID, divID, arr) {
         let itemElement = !item.isEditing ? 'p' : 'input'
         let listItem = document.createElement("div")
         let itemName = document.createElement(`${itemElement}`)
+        if (!item.isEditing) {
+            itemName.addEventListener('click', () => {
+                let status = item.checked
+                if (status === false) {
+                    itemName.classList.remove('text-decoration-none')
+                    itemName.classList.add('text-decoration-line-through')
+                    item.checked = true
+                } else if (status === true) {
+                    itemName.classList.remove('text-decoration-line-through')
+                    itemName.classList.add('text-decoration-none')
+                    item.checked = false
+                }
+            })
+        }
 
         if (item.isEditing) {
             itemName.setAttribute('value', `${item.item}`)
@@ -271,7 +275,6 @@ function hadnleDelete (event, i, divID, ele, arr, editType) {
 function showLists (arr) {
     clearOldList()
     arr.forEach((ele, i) => {
-        // console.log(ele)
         createListDiv(ele, i, arr)
     })
 }
