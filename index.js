@@ -292,7 +292,11 @@ function showEmpty () {
 searchInput.addEventListener('keyup', (e) => {
     let searchTerm = searchInput.value
 
-    findMatches(testData, searchTerm)
+    findMatches(listData, searchTerm)
+    
+    if(e.key === 'Backspace') {
+        findMatches(listData, searchTerm)
+    }
 })
 
 
@@ -306,7 +310,6 @@ function findMatches(arr, str) {
             }
         }
     }
-    console.log(matches)
     showMatches(matches)
 }
 
@@ -325,10 +328,20 @@ function getAllListItems (arr) {
 
 
 function showMatches (arr) {
+    let divArr = Array.from(document.querySelectorAll('.listItem'))
     resultsDiv.innerHTML = ''
     for (let i = 0; i < arr.length; i++) {
-        let item = document.createElement('p')
+
+        let item = document.createElement('a')
         item.innerText = arr[i]
+
+        for (let j = 0; j < divArr.length; j++){
+            let content = divArr[j].innerText
+            let theID = divArr[j].id
+            if (arr[i] === content) {
+                item.setAttribute('href', `${theID}`)
+            }
+        }
         resultsDiv.appendChild(item)
     }
 }
