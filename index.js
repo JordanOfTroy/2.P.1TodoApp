@@ -74,11 +74,20 @@ function createNewListObject (str) {
 }
 
 
-theBigButton.addEventListener('click', (event) => {
+
+theBigButton.addEventListener('click', () => {
     let currentListItem = getInputValue(theInput)
     let currentListObject = createNewListObject(currentListItem)
     listData.push(currentListObject)
     showLists(listData)
+})
+theInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        let currentListItem = getInputValue(theInput)
+        let currentListObject = createNewListObject(currentListItem)
+        listData.push(currentListObject)
+        showLists(listData)
+    }
 })
 
 
@@ -195,6 +204,17 @@ function addlistInputDiv (i, ele, eleID, divID) {
             isEditing: false
         })
         showLists(listData)
+    })
+    theInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            let addedItem = getInputValue(theInput)
+            ele.items.push({
+                item: addedItem,
+                checked: false,
+                isEditing: false
+            })
+            showLists(listData)
+        }
     })
     
     inputDiv.appendChild(theInput)
@@ -339,7 +359,7 @@ function showMatches (arr) {
             let content = divArr[j].innerText
             let theID = divArr[j].id
             if (arr[i] === content) {
-                item.setAttribute('href', `${theID}`)
+                item.setAttribute('href', `#${theID}`)
             }
         }
         resultsDiv.appendChild(item)
