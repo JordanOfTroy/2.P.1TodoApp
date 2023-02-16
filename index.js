@@ -2,6 +2,7 @@ let theInput = document.getElementById('todoInput')
 let theBigButton = document.getElementById('inputButton')
 let theList = document.getElementById('todoList')
 let searchInput = document.getElementById('taskSearch')
+let resultsDiv = document.getElementById('searchResults')
 
 let testData = [
     {
@@ -284,34 +285,29 @@ function showLists (arr) {
 function showEmpty () {
     let message = document.querySelector('#todoList')
     let messageText = document.createElement('h1')
-    messageText.innerText = 'Please add a To-do'
+    messageText.innerText = 'Please Create a List'
     message.appendChild(messageText)
 }
 
 searchInput.addEventListener('keyup', (e) => {
     let searchTerm = searchInput.value
 
-    findMatches(listData, searchTerm)
-
-    // if (e.key ==='Enter') {
-    //     searchInput.value = ''
-    //     // getAllListItems(testData, searchTerm)
-    // }
+    findMatches(testData, searchTerm)
 })
 
 
 function findMatches(arr, str) {
     let items = getAllListItems(arr)
     let matches = []
-    // console.log('finding matches')
-    // console.log(items)
-    for (let i in items) {
-        // console.log(items[i])
-        if (items[i].includes(str)) {
-            matches.push(items[i])
+    if (str.length > 0) {
+        for (let i in items) {
+            if (items[i].includes(str)) {
+                matches.push(items[i])
+            }
         }
     }
     console.log(matches)
+    showMatches(matches)
 }
 
 
@@ -325,6 +321,16 @@ function getAllListItems (arr) {
         }
     }
     return items
+}
+
+
+function showMatches (arr) {
+    resultsDiv.innerHTML = ''
+    for (let i = 0; i < arr.length; i++) {
+        let item = document.createElement('p')
+        item.innerText = arr[i]
+        resultsDiv.appendChild(item)
+    }
 }
 
 
