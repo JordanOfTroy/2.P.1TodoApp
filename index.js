@@ -104,13 +104,13 @@ function createListDiv (ele, ind, arr) {
 function createListTitle (divID, i, ele, arr) {
     let titleRow = document.createElement('div')
     let rowID = `row_${i}`
-    let itemElemet = !ele.isEditing ? 'h1' : 'input'
+    let itemElement = !ele.isEditing ? 'h1' : 'input'
 
-    let listTitle = document.createElement(`${itemElemet}`)
+    let listTitle = document.createElement(`${itemElement}`)
     let eleTitle = ele.title
     let eleID = `${eleTitle}_id${i}`
 
-    if (itemElemet) {
+    if (itemElement) {
         listTitle.setAttribute('value', `${eleTitle}`)
         listTitle.setAttribute('class', 'edit_item_input')
         listTitle.addEventListener('keypress', (e) => {
@@ -132,8 +132,8 @@ function createListTitle (divID, i, ele, arr) {
     titleRow.appendChild(createUtilities(i, 'xl', divID, ele, arr, 'list'))
 
     let toolsDiv = document.createElement('div')
-    let toolsDiviD = `tools_${i}`
-    toolsDiv.setAttribute('id', `${toolsDiviD}`)
+    let toolsDivID = `tools_${i}`
+    toolsDiv.setAttribute('id', `${toolsDivID}`)
     toolsDiv.setAttribute('class','tools')
     toolsDiv.appendChild(addlistInputDiv(i, ele, eleID, divID, 'list'))
     
@@ -146,15 +146,15 @@ function createListTitle (divID, i, ele, arr) {
 
 function createUtilities (i, size, divID, ele, arr, editType) {
     let utilDiv = document.createElement('div')
-    let uitilIdvID = `utils_${i}`
-    utilDiv.setAttribute('id', `${uitilIdvID}`)
+    let utilIdvID = `utils_${i}`
+    utilDiv.setAttribute('id', `${utilIdvID}`)
     utilDiv.setAttribute('class','utils mx-3')
 
-    let editbutton = document.createElement('i')
-    let edifButtonID = `editButt_${i}`
-    editbutton.setAttribute('id', `${edifButtonID}`)
-    editbutton.setAttribute('class', `fa-solid fa-pen-to-square fa-${size} utilButton mx-3`)
-    editbutton.addEventListener('click', (e) => {
+    let editButton = document.createElement('i')
+    let editButtonID = `editButt_${i}`
+    editButton.setAttribute('id', `${editButtonID}`)
+    editButton.setAttribute('class', `fa-solid fa-pen-to-square fa-${size} utilButton mx-3`)
+    editButton.addEventListener('click', (e) => {
         
         handleEdit(e, i, divID, ele, arr, editType)
     })
@@ -164,10 +164,10 @@ function createUtilities (i, size, divID, ele, arr, editType) {
     deleteButton.setAttribute('id', `${deleteButtonID}`)
     deleteButton.setAttribute('class', `fa-solid fa-trash fa-${size} utilButton mx-3`)
     deleteButton.addEventListener('click', (e) => {
-        hadnleDelete(e, i, divID, ele, arr, editType)
+        handleDelete(e, i, divID, ele, arr, editType)
     })
 
-    utilDiv.appendChild(editbutton)
+    utilDiv.appendChild(editButton)
     utilDiv.appendChild(deleteButton)
     
     return utilDiv
@@ -262,7 +262,7 @@ function handleEdit (event, i, divID, ele, arr, editType) {
 }
 
 
-function hadnleDelete (event, i, divID, ele, arr, editType) {
+function handleDelete (event, i, divID, ele, arr, editType) {
 
     if (editType === 'list') {
         arr.splice(i, 1)
