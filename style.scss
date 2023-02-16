@@ -43,3 +43,8 @@ body {
     }
 }
 
+.settingsButt {
+    &:hover {
+        cursor: pointer;
+    }
+}

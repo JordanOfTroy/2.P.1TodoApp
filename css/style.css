@@ -37,4 +37,8 @@ body {
 }
 .utilButton:hover {
   cursor: pointer;
+}
+
+.settingsButt:hover {
+  cursor: pointer;
 }/*# sourceMappingURL=style.css.map */

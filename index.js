@@ -289,11 +289,43 @@ function showEmpty () {
 }
 
 searchInput.addEventListener('keyup', (e) => {
-    console.log(`you're searching for something...`)
-    if (e.key ==='Enter') {
-        console.log('you hit enter!')
-    }
+    let searchTerm = searchInput.value
+
+    findMatches(listData, searchTerm)
+
+    // if (e.key ==='Enter') {
+    //     searchInput.value = ''
+    //     // getAllListItems(testData, searchTerm)
+    // }
 })
+
+
+function findMatches(arr, str) {
+    let items = getAllListItems(arr)
+    let matches = []
+    // console.log('finding matches')
+    // console.log(items)
+    for (let i in items) {
+        // console.log(items[i])
+        if (items[i].includes(str)) {
+            matches.push(items[i])
+        }
+    }
+    console.log(matches)
+}
+
+
+function getAllListItems (arr) {
+    let items = []
+    for (let i = 0; i < arr.length; i++) {
+        let itemsArr = arr[i].items
+        for (let j = 0; j < itemsArr.length; j++) {
+            let item = itemsArr[j].item
+            items.push(item)
+        }
+    }
+    return items
+}
 
 
 
