@@ -23,11 +23,18 @@
                 <input type="text" name="" id="todoInput" placeholder="New list title...">
                 <button id="inputButton" value="newList"><i class="fa-solid fa-plus"></i> Add List</button>
             </div>
+            <div class="mx-5">
+                <label for="orderByOptions">Order by : </label>
+                <select name="orderByOptions" id="">
+                    <option value="ORDER_BY_TIME">Date</option>
+                    <option value="ORDER_BY_NAME">List Name</option>
+                </select>
+            </div>
             <div class="searchDiv">
-                <input type="text" id="taskSearch" class="mx-5" placeholder="Search for a task...">
+                <input type="text" id="taskSearch" class="" placeholder="Search for a task...">
                 <div id="searchResults" calss="d-flex-column flex-column"></div>
             </div>
-            <i id="magicWand" class="fa-solid fa-wand-magic-sparkles fa-xl settingsButt"></i>
+            <!-- <i id="magicWand" class="fa-solid fa-wand-magic-sparkles fa-xl settingsButt"></i> -->
         </div>
         <div id="todoList"></div>
        

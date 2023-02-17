@@ -3,6 +3,10 @@ let theBigButton = document.getElementById('inputButton')
 let theList = document.getElementById('todoList')
 let searchInput = document.getElementById('taskSearch')
 let resultsDiv = document.getElementById('searchResults')
+let orderOptions = document.querySelector('select')
+
+const ORDER_BY_TIME = 'ORDER_BY_TIME'
+const ORDER_BY_NAME = 'ORDER_BY_NAME'
 
 let testData = [
     {
@@ -58,6 +62,7 @@ function listObj (str, arr = [], bool = false) {
     this.title = str,
     this.items = arr,
     this.isEditing = bool
+    this.timeStamp = new Date()
 }
 
 let listData = []
@@ -88,6 +93,26 @@ theInput.addEventListener('keypress', (event) => {
         listData.push(currentListObject)
         showLists(listData)
     }
+})
+orderOptions.addEventListener('change', () => {
+    let order = orderOptions.value
+
+    switch (order) {
+        case ORDER_BY_NAME:
+            listData.sort((a, b) => {
+                return a.title > b.title ? 1 : -1
+            })
+            break;
+        case ORDER_BY_TIME:
+            listData.sort((a, b) => {
+                return a.timeStamp - b.timeStamp
+            })
+            break;
+        default:
+            console.error('DAFUQ!?!?!')
+            break;
+    }
+    showLists(listData)
 })
 
 
