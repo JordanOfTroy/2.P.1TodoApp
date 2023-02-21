@@ -62,7 +62,7 @@ function listObj (str, arr = [], bool = false) {
     this.title = str,
     this.items = arr,
     this.isEditing = bool
-    this.timeStamp = new Date()
+    this.timeStamp = new Date
 }
 
 let listData = []
