@@ -7,6 +7,33 @@ let orderOptions = document.querySelector('select')
 
 const ORDER_BY_TIME = 'ORDER_BY_TIME'
 const ORDER_BY_NAME = 'ORDER_BY_NAME'
+const BLUE = 'BLUE'
+const PURPLE = 'PURPLE'
+const PINK = 'PINK'
+const ORANGE = 'ORANGE'
+const GREEN = 'GREEN'
+const COLOR_OPTIONS = [
+    {
+        value: BLUE,
+        text: 'Blue'
+    },
+    {
+        value: PURPLE,
+        text: 'Purple'
+    },
+    {
+        value: PINK,
+        text: 'Pink'
+    },
+    {
+        value: ORANGE,
+        text: 'Orange'
+    },
+    {
+        value: GREEN,
+        text: 'Green'
+    }
+]
 
 let testData = [
     {
@@ -201,8 +228,50 @@ function createUtilities (i, size, divID, ele, arr, editType) {
         handleDelete(e, i, divID, ele, arr, editType)
     })
 
+    let colorOptions = document.createElement('select')
+    colorOptions.addEventListener('change', (e) => {
+        updateListColor(e)
+    })
+
+    addColorOptions(colorOptions, COLOR_OPTIONS)
+
+    function addColorOptions (ele, arr) {
+        let blank = document.createElement('option')
+        blank.setAttribute('value', 'none')
+        blank.innerText = '---'
+        ele.appendChild(blank)
+        for (let i = 0; i < arr.length; i++) {
+            let colorOption = document.createElement('option')
+            colorOption.setAttribute('value', `${arr[i].value}`)
+            colorOption.innerText = arr[i].text
+            ele.appendChild(colorOption)
+        }
+    }
+
+    function updateListColor(e) {
+        let option = e.target.value
+        let parentList = e.target.parentNode.parentNode.parentNode
+
+        switch (option) {
+            case BLUE:
+                console.log(parentList)
+                break;
+            case PURPLE:
+                break;
+            case PINK:
+                break;
+            case ORANGE:
+                break;
+            case GREEN:
+                break;
+            default:
+                break;
+        }
+    }
+
     utilDiv.appendChild(editButton)
     utilDiv.appendChild(deleteButton)
+    utilDiv.appendChild(colorOptions)
     
     return utilDiv
 }
@@ -375,6 +444,12 @@ function getAllListItems (arr) {
 function showMatches (arr) {
     let divArr = Array.from(document.querySelectorAll('.listItem'))
     resultsDiv.innerHTML = ''
+    // console.log(divArr)
+    // divArr.sort((a, b) => {
+    //     return a.innerText < b.innerText ? 1 : -1
+    // })
+    // console.log(divArr)
+    // console.log(`~~~~~`)
     for (let i = 0; i < arr.length; i++) {
 
         let item = document.createElement('a')
