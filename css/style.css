@@ -11,7 +11,6 @@ body {
 }
 
 .listCard {
-  background-color: white;
   margin: 2em auto;
   padding: 1em;
   box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.2);
@@ -41,4 +40,24 @@ body {
 
 .settingsButt:hover {
   cursor: pointer;
+}
+
+.blue-me {
+  background-color: #00aaff;
+}
+
+.purple-me {
+  background-color: #aa00ff;
+}
+
+.pink-me {
+  background-color: #ff00aa;
+}
+
+.orange-me {
+  background-color: #ffaa00;
+}
+
+.green-me {
+  background-color: #aaff00;
 }/*# sourceMappingURL=style.css.map */

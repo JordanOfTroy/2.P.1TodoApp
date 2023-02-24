@@ -163,6 +163,9 @@ function createListDiv (ele, ind, arr) {
 
 
 function createListTitle (divID, i, ele, arr) {
+    console.log(i)
+    console.log(arr)
+    console.log(`-----`)
     let titleRow = document.createElement('div')
     let rowID = `row_${i}`
     let itemElement = !ele.isEditing ? 'h1' : 'input'
@@ -170,6 +173,9 @@ function createListTitle (divID, i, ele, arr) {
     let listTitle = document.createElement(`${itemElement}`)
     let eleTitle = ele.title
     let eleID = `${eleTitle}_id${i}`
+
+    let colorOptions = document.createElement('select')
+
 
     if (itemElement) {
         listTitle.setAttribute('value', `${eleTitle}`)
@@ -197,10 +203,61 @@ function createListTitle (divID, i, ele, arr) {
     toolsDiv.setAttribute('id', `${toolsDivID}`)
     toolsDiv.setAttribute('class','tools')
     toolsDiv.appendChild(addlistInputDiv(i, ele, eleID, divID, 'list'))
+
+
+    colorOptions.addEventListener('change', (e) => {
+        updateListColor(e, i, arr)
+    })
+
+    addColorOptions(colorOptions, COLOR_OPTIONS)
+    
+    function addColorOptions (ele, arr) {
+        let blank = document.createElement('option')
+        blank.setAttribute('value', 'none')
+        blank.innerText = '---'
+        ele.appendChild(blank)
+        for (let i = 0; i < arr.length; i++) {
+            let colorOption = document.createElement('option')
+            colorOption.setAttribute('value', `${arr[i].value}`)
+            colorOption.innerText = arr[i].text
+            ele.appendChild(colorOption)
+        }
+    }
+
+    function updateListColor(e, i, arr) {
+        let option = e.target.value
+        let parentList = e.target.parentNode.parentNode
+        console.log(parentList)
+        console.log(i)
+        console.log(arr)
+
+        switch (option) {
+            case BLUE:
+                parentList.classList.add('blue-me')
+                break;
+            case PURPLE:
+                parentList.classList.add('purple-me')
+                break;
+            case PINK:
+                parentList.classList.add('pink-me')
+                break;
+            case ORANGE:
+                parentList.classList.add('orange-me')
+                break;
+            case GREEN:
+                parentList.classList.add('green-me')
+                break;
+            default:
+                break;
+        }
+    }
+
     
     document.getElementById(divID).appendChild(titleRow)
     document.getElementById(rowID).appendChild(listTitle)
     document.getElementById(divID).appendChild(toolsDiv)
+    document.getElementById(rowID).appendChild(colorOptions)
+    
     createListItems(ele, eleID, divID, arr)
 }
 
@@ -271,7 +328,7 @@ function createUtilities (i, size, divID, ele, arr, editType) {
 
     utilDiv.appendChild(editButton)
     utilDiv.appendChild(deleteButton)
-    utilDiv.appendChild(colorOptions)
+    // utilDiv.appendChild(colorOptions)
     
     return utilDiv
 }
@@ -323,6 +380,7 @@ function createListItems (ele, eleID, divID, arr) {
         let itemElement = !item.isEditing ? 'p' : 'input'
         let listItem = document.createElement("div")
         let itemName = document.createElement(`${itemElement}`)
+
         if (!item.isEditing) {
             itemName.setAttribute('class', 'listName')
             itemName.addEventListener('click', () => {
@@ -351,6 +409,7 @@ function createListItems (ele, eleID, divID, arr) {
                 }
             })
         }
+
         itemName.innerText = item.item
         listItem.setAttribute('id', `${eleID}_item_id${i}`)
         listItem.setAttribute('class', 'listItem')
@@ -358,6 +417,7 @@ function createListItems (ele, eleID, divID, arr) {
         document.getElementById(divID).appendChild(listItem)
         listItem.appendChild(itemName)
         listItem.appendChild(createUtilities(i, 'md', divID, ele, arr))
+
     })
 }
 

@@ -1,4 +1,5 @@
-@use './css/mixins' as *;
+@use './assets/mixing' as *;
+@use './assets/vars' as *;
 
 body {
     background-color: black;
@@ -14,7 +15,7 @@ body {
 
 .listCard {
     // border: solid 1px black;
-    background-color: white;
+    // background-color: white;
     margin: 2em auto;
     padding: 1em;
     box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, .2);
@@ -51,4 +52,16 @@ body {
 
 .blue-me {
     background-color: $color-blue;
+}
+.purple-me {
+    background-color: $color-purple;
+}
+.pink-me {
+    background-color: $color-pink;
+}
+.orange-me {
+    background-color: $color-orange;
+}
+.green-me {
+    background-color: $color-green;
 }
