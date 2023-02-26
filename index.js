@@ -89,7 +89,8 @@ function listObj (str, arr = [], bool = false) {
     this.title = str,
     this.items = arr,
     this.isEditing = bool
-    this.timeStamp = new Date
+    this.timeStamp = new Date,
+    this.bgColor = null
 }
 
 let listData = []
@@ -154,7 +155,7 @@ function createListDiv (ele, ind, arr) {
 
     theList.appendChild(listTitleDiv)
     listTitleDiv.setAttribute('id', divID)
-    listTitleDiv.setAttribute('class', 'listCard')
+    listTitleDiv.setAttribute('class', `listCard ${ele.bgColor ? ele.bgColor : ''}`)
 
     createListTitle(divID, ind, ele, arr)
 
@@ -163,9 +164,7 @@ function createListDiv (ele, ind, arr) {
 
 
 function createListTitle (divID, i, ele, arr) {
-    console.log(i)
-    console.log(arr)
-    console.log(`-----`)
+   
     let titleRow = document.createElement('div')
     let rowID = `row_${i}`
     let itemElement = !ele.isEditing ? 'h1' : 'input'
@@ -179,7 +178,7 @@ function createListTitle (divID, i, ele, arr) {
 
     if (itemElement) {
         listTitle.setAttribute('value', `${eleTitle}`)
-        listTitle.setAttribute('class', 'edit_item_input')
+        listTitle.setAttribute('class', `edit_item_input`)
         listTitle.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 let newTitle = listTitle.value
@@ -189,6 +188,7 @@ function createListTitle (divID, i, ele, arr) {
             }
         })
     }
+
 
     titleRow.setAttribute('id', `${rowID}`)
     titleRow.setAttribute('class', 'listHeader')
@@ -206,7 +206,7 @@ function createListTitle (divID, i, ele, arr) {
 
 
     colorOptions.addEventListener('change', (e) => {
-        updateListColor(e, i, arr)
+        updateListColor(e, i)
     })
 
     addColorOptions(colorOptions, COLOR_OPTIONS)
@@ -224,30 +224,35 @@ function createListTitle (divID, i, ele, arr) {
         }
     }
 
-    function updateListColor(e, i, arr) {
+    function updateListColor(e, i) {
         let option = e.target.value
         let parentList = e.target.parentNode.parentNode
-        console.log(parentList)
-        console.log(i)
-        console.log(arr)
+        let parentObj = listData[i]
+        
 
         switch (option) {
             case BLUE:
-                parentList.classList.add('blue-me')
+                listData[i].bgColor = BLUE
+                showLists(listData)
                 break;
             case PURPLE:
-                parentList.classList.add('purple-me')
+                listData[i].bgColor = PURPLE
+                showLists(listData)
                 break;
             case PINK:
-                parentList.classList.add('pink-me')
+                listData[i].bgColor = PINK
+                showLists(listData)
                 break;
             case ORANGE:
-                parentList.classList.add('orange-me')
+                listData[i].bgColor = ORANGE
+                showLists(listData)
                 break;
             case GREEN:
-                parentList.classList.add('green-me')
+                listData[i].bgColor = GREEN
+                showLists(listData)
                 break;
             default:
+                listData[i].bgColor = null
                 break;
         }
     }
@@ -285,50 +290,8 @@ function createUtilities (i, size, divID, ele, arr, editType) {
         handleDelete(e, i, divID, ele, arr, editType)
     })
 
-    let colorOptions = document.createElement('select')
-    colorOptions.addEventListener('change', (e) => {
-        updateListColor(e)
-    })
-
-    addColorOptions(colorOptions, COLOR_OPTIONS)
-
-    function addColorOptions (ele, arr) {
-        let blank = document.createElement('option')
-        blank.setAttribute('value', 'none')
-        blank.innerText = '---'
-        ele.appendChild(blank)
-        for (let i = 0; i < arr.length; i++) {
-            let colorOption = document.createElement('option')
-            colorOption.setAttribute('value', `${arr[i].value}`)
-            colorOption.innerText = arr[i].text
-            ele.appendChild(colorOption)
-        }
-    }
-
-    function updateListColor(e) {
-        let option = e.target.value
-        let parentList = e.target.parentNode.parentNode.parentNode
-
-        switch (option) {
-            case BLUE:
-                console.log(parentList)
-                break;
-            case PURPLE:
-                break;
-            case PINK:
-                break;
-            case ORANGE:
-                break;
-            case GREEN:
-                break;
-            default:
-                break;
-        }
-    }
-
     utilDiv.appendChild(editButton)
     utilDiv.appendChild(deleteButton)
-    // utilDiv.appendChild(colorOptions)
     
     return utilDiv
 }
@@ -504,12 +467,7 @@ function getAllListItems (arr) {
 function showMatches (arr) {
     let divArr = Array.from(document.querySelectorAll('.listItem'))
     resultsDiv.innerHTML = ''
-    // console.log(divArr)
-    // divArr.sort((a, b) => {
-    //     return a.innerText < b.innerText ? 1 : -1
-    // })
-    // console.log(divArr)
-    // console.log(`~~~~~`)
+
     for (let i = 0; i < arr.length; i++) {
 
         let item = document.createElement('a')
