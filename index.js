@@ -4,6 +4,7 @@ let theList = document.getElementById('todoList')
 let searchInput = document.getElementById('taskSearch')
 let resultsDiv = document.getElementById('searchResults')
 let orderOptions = document.querySelector('select')
+let deathButton = document.querySelector('#deathButton')
 
 const ORDER_BY_TIME = 'ORDER_BY_TIME'
 const ORDER_BY_NAME = 'ORDER_BY_NAME'
@@ -142,6 +143,10 @@ orderOptions.addEventListener('change', () => {
     }
     showLists(listData)
 })
+deathButton.addEventListener('click', () => {
+    listData = []
+    showLists(listData)
+})
 
 
 function clearOldList () {
@@ -252,6 +257,7 @@ function createListTitle (divID, i, ele, arr) {
                 break;
             default:
                 listData[i].bgColor = null
+                showLists(listData)
                 break;
         }
     }
@@ -289,26 +295,30 @@ function createUtilities (i, size, divID, ele, arr, editType) {
         handleDelete(e, i, divID, ele, arr, editType)
     })
 
-    let clearCompletedTasksButton = document.createElement('i')
-    let clearCompletedTasksButtonID = `clearAllTasks_${i}`
-    clearCompletedTasksButton.setAttribute('id', `${clearCompletedTasksButtonID}`)
-    clearCompletedTasksButton.setAttribute('class', `fa-solid fa-circle-xmark fa-${size} utilButton mx-3`)
-    clearCompletedTasksButton.addEventListener('click', (e) => {
-       handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) 
-    })
-
-    let clearAllTasksButton = document.createElement('i')
-    let clearAllTasksButtonID = `clearAllTasks_${i}`
-    clearAllTasksButton.setAttribute('id', `${clearAllTasksButtonID}`)
-    clearAllTasksButton.setAttribute('class', `fa-solid fa-explosion fa-${size} utilButton mx-3`)
-    clearAllTasksButton.addEventListener('click', (e) => {
-       handleClearAllTasksFromList(e, i, divID, ele, arr, editType) 
-    })
-
     utilDiv.appendChild(editButton)
     utilDiv.appendChild(deleteButton)
-    utilDiv.appendChild(clearCompletedTasksButton)
-    utilDiv.appendChild(clearAllTasksButton)
+
+    if (editType != 'listUtils') {
+
+        let clearCompletedTasksButton = document.createElement('i')
+        let clearCompletedTasksButtonID = `clearAllTasks_${i}`
+        clearCompletedTasksButton.setAttribute('id', `${clearCompletedTasksButtonID}`)
+        clearCompletedTasksButton.setAttribute('class', `fa-solid fa-circle-xmark fa-${size} utilButton mx-3`)
+        clearCompletedTasksButton.addEventListener('click', (e) => {
+           handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) 
+        })
+    
+        let clearAllTasksButton = document.createElement('i')
+        let clearAllTasksButtonID = `clearAllTasks_${i}`
+        clearAllTasksButton.setAttribute('id', `${clearAllTasksButtonID}`)
+        clearAllTasksButton.setAttribute('class', `fa-solid fa-explosion fa-${size} utilButton mx-3`)
+        clearAllTasksButton.addEventListener('click', (e) => {
+           handleClearAllTasksFromList(e, i, divID, ele, arr, editType) 
+        })
+
+        utilDiv.appendChild(clearCompletedTasksButton)
+        utilDiv.appendChild(clearAllTasksButton)
+    }
     
     return utilDiv
 }
@@ -396,7 +406,7 @@ function createListItems (ele, eleID, divID, arr) {
 
         document.getElementById(divID).appendChild(listItem)
         listItem.appendChild(itemName)
-        listItem.appendChild(createUtilities(i, 'md', divID, ele, arr))
+        listItem.appendChild(createUtilities(i, 'md', divID, ele, arr, 'listUtils'))
 
     })
 }
@@ -406,7 +416,7 @@ function handleEdit (event, i, divID, ele, arr, editType) {
 
     if (editType === 'list') {
         let listToBeEdited = ele
-        ele.isEditing = true
+        listToBeEdited.isEditing = true
     } else {
         let itemTobeEdited = ele.items[i] 
         itemTobeEdited.isEditing = true
@@ -430,16 +440,26 @@ function handleDelete (event, i, divID, ele, arr, editType) {
 
 function handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) {
     if (editType === 'list') {
-        let listItems = arr[i].items
-        for (let i = 0; i < listItems.length; i++) {
-            if (listItems[i].checked) {
-                console.log(listItems[i])
-                listItems.splice(i, 1)
-            }
-            showLists(listData)
-        }
+        let filteredItems = arr[i].items.filter(el => !el.checked)
+        arr[i].items = filteredItems
     }
+    showLists(listData)
 }
+// function handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) {
+//     if (editType === 'list') {
+//         let listItems = arr[i].items
+//         for (let i = 0; i < listItems.length; i++) {
+//             if (listItems[i].checked) {
+//                 removeTheItem(i)
+//             }
+//         }
+
+//         function removeTheItem (i) {
+//             listItems.splice(i, 1)
+//         }
+//     }
+//     showLists(listData)
+// }
 
 function handleClearAllTasksFromList(e, i, divID, ele, arr, editType) {
     if (editType === 'list') {
