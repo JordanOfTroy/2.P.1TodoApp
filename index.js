@@ -226,9 +226,8 @@ function createListTitle (divID, i, ele, arr) {
 
     function updateListColor(e, i) {
         let option = e.target.value
-        let parentList = e.target.parentNode.parentNode
-        let parentObj = listData[i]
-        
+        // let parentList = e.target.parentNode.parentNode
+        // let parentObj = listData[i]
 
         switch (option) {
             case BLUE:
@@ -290,8 +289,26 @@ function createUtilities (i, size, divID, ele, arr, editType) {
         handleDelete(e, i, divID, ele, arr, editType)
     })
 
+    let clearCompletedTasksButton = document.createElement('i')
+    let clearCompletedTasksButtonID = `clearAllTasks_${i}`
+    clearCompletedTasksButton.setAttribute('id', `${clearCompletedTasksButtonID}`)
+    clearCompletedTasksButton.setAttribute('class', `fa-solid fa-circle-xmark fa-${size} utilButton mx-3`)
+    clearCompletedTasksButton.addEventListener('click', (e) => {
+       handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) 
+    })
+
+    let clearAllTasksButton = document.createElement('i')
+    let clearAllTasksButtonID = `clearAllTasks_${i}`
+    clearAllTasksButton.setAttribute('id', `${clearAllTasksButtonID}`)
+    clearAllTasksButton.setAttribute('class', `fa-solid fa-explosion fa-${size} utilButton mx-3`)
+    clearAllTasksButton.addEventListener('click', (e) => {
+       handleClearAllTasksFromList(e, i, divID, ele, arr, editType) 
+    })
+
     utilDiv.appendChild(editButton)
     utilDiv.appendChild(deleteButton)
+    utilDiv.appendChild(clearCompletedTasksButton)
+    utilDiv.appendChild(clearAllTasksButton)
     
     return utilDiv
 }
@@ -411,6 +428,25 @@ function handleDelete (event, i, divID, ele, arr, editType) {
     showLists(listData)
 }
 
+function handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) {
+    if (editType === 'list') {
+        let listItems = arr[i].items
+        for (let i = 0; i < listItems.length; i++) {
+            if (listItems[i].checked) {
+                console.log(listItems[i])
+                listItems.splice(i, 1)
+            }
+            showLists(listData)
+        }
+    }
+}
+
+function handleClearAllTasksFromList(e, i, divID, ele, arr, editType) {
+    if (editType === 'list') {
+        arr[i].items = []
+    }
+    showLists(listData)
+}
 
 function showLists (arr) {
     clearOldList()
