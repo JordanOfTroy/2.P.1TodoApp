@@ -384,18 +384,30 @@ function addlistInputDiv (i, ele, eleID, divID) {
     theInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
             let addedItem = getInputValue(theInput)
-            ele.items.push({
-                item: addedItem,
-                checked: false,
-                isEditing: false
-            })
-            showLists(listData)
+            addItemToList(i, addedItem)
+            // ele.items.push({
+            //     item: addedItem,
+            //     checked: false,
+            //     isEditing: false
+            // })
+            showLists(getListData())
         }
     })
     
     inputDiv.appendChild(theInput)
     inputDiv.appendChild(button)
     return inputDiv
+}
+
+function addItemToList (i, value) {
+    let listData = getListData()
+    let currentList = listData[i]
+    currentList.items.push({
+        item: value,
+        checked: false,
+        isEditing: false
+    })
+    console.log(currentList)
 }
 
 function handleEdit (event, i, divID, ele, arr, editType) {
