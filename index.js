@@ -94,8 +94,6 @@ function listObj (str, arr = [], bool = false) {
     this.bgColor = null
 }
 
-let listData = []
-
 function getInputValue (ele) {
     let currentInputValue = ele.value
     ele.value = ""
@@ -107,20 +105,40 @@ function createNewListObject (str) {
     return newObj
 }
 
+function checkForListData () {
+    return localStorage.getItem('listData')
+}
 
+function setInitialListDataToLocalStorage () {
+    window.localStorage.setItem('listData', JSON.stringify([]))
+}
 
-theBigButton.addEventListener('click', () => {
+function updateLocalStorage (str, arr) {
+    localStorage.setItem(str, JSON.stringify(arr))
+}
+
+function getListData () {
+    return JSON.parse(localStorage.getItem('listData'))
+}
+
+function addNewList () {
+    checkForListData() ?? setInitialListDataToLocalStorage()
+    
     let currentListItem = getInputValue(theInput)
     let currentListObject = createNewListObject(currentListItem)
+    let listData = getListData()
+    
     listData.push(currentListObject)
+    updateLocalStorage('listData', listData)
     showLists(listData)
-})
+}
+
+
+
+theBigButton.addEventListener('click', () => addNewList())
 theInput.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
-        let currentListItem = getInputValue(theInput)
-        let currentListObject = createNewListObject(currentListItem)
-        listData.push(currentListObject)
-        showLists(listData)
+        addNewList()
     }
 })
 orderOptions.addEventListener('change', () => {
@@ -445,21 +463,6 @@ function handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) {
     }
     showLists(listData)
 }
-// function handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) {
-//     if (editType === 'list') {
-//         let listItems = arr[i].items
-//         for (let i = 0; i < listItems.length; i++) {
-//             if (listItems[i].checked) {
-//                 removeTheItem(i)
-//             }
-//         }
-
-//         function removeTheItem (i) {
-//             listItems.splice(i, 1)
-//         }
-//     }
-//     showLists(listData)
-// }
 
 function handleClearAllTasksFromList(e, i, divID, ele, arr, editType) {
     if (editType === 'list') {
@@ -469,6 +472,7 @@ function handleClearAllTasksFromList(e, i, divID, ele, arr, editType) {
 }
 
 function showLists (arr) {
+    // console.log(arr)
     clearOldList()
     arr.forEach((ele, i) => {
         createListDiv(ele, i, arr)
@@ -543,5 +547,5 @@ function showMatches (arr) {
 
 
 // listData.length > 0 ? showLists(listData) : showLists(testData)
-listData.length > 0 ? showLists(listData) : showEmpty()
+JSON.parse(localStorage.getItem('listData')).length > 0 ? showLists(JSON.parse(localStorage.getItem('listData'))) : showEmpty()
 
