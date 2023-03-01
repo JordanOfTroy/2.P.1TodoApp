@@ -143,6 +143,7 @@ theInput.addEventListener('keypress', (event) => {
 })
 orderOptions.addEventListener('change', () => {
     let order = orderOptions.value
+    let listData = getListData()
 
     switch (order) {
         case ORDER_BY_NAME:
@@ -162,8 +163,8 @@ orderOptions.addEventListener('change', () => {
     showLists(listData)
 })
 deathButton.addEventListener('click', () => {
-    listData = []
-    showLists(listData)
+    localStorage.removeItem('listData')
+    showLists(getListData())
 })
 
 
