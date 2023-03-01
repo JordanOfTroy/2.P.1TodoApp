@@ -130,48 +130,21 @@ function addNewList () {
     
     listData.push(currentListObject)
     updateLocalStorage('listData', listData)
-    showLists(listData)
-}
 
-
-
-theBigButton.addEventListener('click', () => addNewList())
-theInput.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-        addNewList()
-    }
-})
-orderOptions.addEventListener('change', () => {
-    let order = orderOptions.value
-    let listData = getListData()
-
-    switch (order) {
-        case ORDER_BY_NAME:
-            listData.sort((a, b) => {
-                return a.title > b.title ? 1 : -1
-            })
-            break;
-        case ORDER_BY_TIME:
-            listData.sort((a, b) => {
-                return a.timeStamp - b.timeStamp
-            })
-            break;
-        default:
-            console.error('DAFUQ!?!?!')
-            break;
-    }
-    showLists(listData)
-})
-deathButton.addEventListener('click', () => {
-    localStorage.removeItem('listData')
     showLists(getListData())
-})
-
+}
 
 function clearOldList () {
     theList.innerHTML = ''
 }
 
+function showLists (arr) {
+    // console.log(arr)
+    clearOldList()
+    arr.forEach((ele, i) => {
+        createListDiv(ele, i, arr)
+    })
+}
 
 function createListDiv (ele, ind, arr) {
     let listTitleDiv = document.createElement("div")
@@ -185,7 +158,6 @@ function createListDiv (ele, ind, arr) {
 
     return listTitleDiv
 }
-
 
 function createListTitle (divID, i, ele, arr) {
    
@@ -290,6 +262,51 @@ function createListTitle (divID, i, ele, arr) {
     createListItems(ele, eleID, divID, arr)
 }
 
+function createListItems (ele, eleID, divID, arr) {
+    ele.items.forEach((item, i) => {
+        let itemElement = !item.isEditing ? 'p' : 'input'
+        let listItem = document.createElement("div")
+        let itemName = document.createElement(`${itemElement}`)
+
+        if (!item.isEditing) {
+            itemName.setAttribute('class', 'listName')
+            itemName.addEventListener('click', () => {
+                let status = item.checked
+                if (status === false) {
+                    itemName.classList.remove('text-decoration-none')
+                    itemName.classList.add('text-decoration-line-through')
+                    item.checked = true
+                } else if (status === true) {
+                    itemName.classList.remove('text-decoration-line-through')
+                    itemName.classList.add('text-decoration-none')
+                    item.checked = false
+                }
+            })
+        }
+
+        if (item.isEditing) {
+            itemName.setAttribute('value', `${item.item}`)
+            itemName.setAttribute('class', 'edit_item_input')
+            itemName.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') {
+                    let newValue = itemName.value
+                    item.item = newValue
+                    item.isEditing = false
+                    showLists(listData)
+                }
+            })
+        }
+
+        itemName.innerText = item.item
+        listItem.setAttribute('id', `${eleID}_item_id${i}`)
+        listItem.setAttribute('class', 'listItem')
+
+        document.getElementById(divID).appendChild(listItem)
+        listItem.appendChild(itemName)
+        listItem.appendChild(createUtilities(i, 'md', divID, ele, arr, 'listUtils'))
+
+    })
+}
 
 function createUtilities (i, size, divID, ele, arr, editType) {
     let utilDiv = document.createElement('div')
@@ -342,7 +359,6 @@ function createUtilities (i, size, divID, ele, arr, editType) {
     return utilDiv
 }
 
-
 function addlistInputDiv (i, ele, eleID, divID) {
     let inputDiv = document.createElement('div')
     let inputID = `inputDiv_${i}`
@@ -381,55 +397,6 @@ function addlistInputDiv (i, ele, eleID, divID) {
     inputDiv.appendChild(button)
     return inputDiv
 }
-
-
-
-function createListItems (ele, eleID, divID, arr) {
-    ele.items.forEach((item, i) => {
-        let itemElement = !item.isEditing ? 'p' : 'input'
-        let listItem = document.createElement("div")
-        let itemName = document.createElement(`${itemElement}`)
-
-        if (!item.isEditing) {
-            itemName.setAttribute('class', 'listName')
-            itemName.addEventListener('click', () => {
-                let status = item.checked
-                if (status === false) {
-                    itemName.classList.remove('text-decoration-none')
-                    itemName.classList.add('text-decoration-line-through')
-                    item.checked = true
-                } else if (status === true) {
-                    itemName.classList.remove('text-decoration-line-through')
-                    itemName.classList.add('text-decoration-none')
-                    item.checked = false
-                }
-            })
-        }
-
-        if (item.isEditing) {
-            itemName.setAttribute('value', `${item.item}`)
-            itemName.setAttribute('class', 'edit_item_input')
-            itemName.addEventListener('keypress', (e) => {
-                if(e.key === 'Enter') {
-                    let newValue = itemName.value
-                    item.item = newValue
-                    item.isEditing = false
-                    showLists(listData)
-                }
-            })
-        }
-
-        itemName.innerText = item.item
-        listItem.setAttribute('id', `${eleID}_item_id${i}`)
-        listItem.setAttribute('class', 'listItem')
-
-        document.getElementById(divID).appendChild(listItem)
-        listItem.appendChild(itemName)
-        listItem.appendChild(createUtilities(i, 'md', divID, ele, arr, 'listUtils'))
-
-    })
-}
-
 
 function handleEdit (event, i, divID, ele, arr, editType) {
 
@@ -472,31 +439,12 @@ function handleClearAllTasksFromList(e, i, divID, ele, arr, editType) {
     showLists(listData)
 }
 
-function showLists (arr) {
-    // console.log(arr)
-    clearOldList()
-    arr.forEach((ele, i) => {
-        createListDiv(ele, i, arr)
-    })
-}
-
 function showEmpty () {
     let message = document.querySelector('#todoList')
     let messageText = document.createElement('h1')
     messageText.innerText = 'Please Create a List'
     message.appendChild(messageText)
 }
-
-searchInput.addEventListener('keyup', (e) => {
-    let searchTerm = searchInput.value
-
-    findMatches(listData, searchTerm)
-    
-    if(e.key === 'Backspace') {
-        findMatches(listData, searchTerm)
-    }
-})
-
 
 function findMatches(arr, str) {
     let items = getAllListItems(arr)
@@ -511,7 +459,6 @@ function findMatches(arr, str) {
     showMatches(matches)
 }
 
-
 function getAllListItems (arr) {
     let items = []
     for (let i = 0; i < arr.length; i++) {
@@ -523,7 +470,6 @@ function getAllListItems (arr) {
     }
     return items
 }
-
 
 function showMatches (arr) {
     let divArr = Array.from(document.querySelectorAll('.listItem'))
@@ -546,7 +492,50 @@ function showMatches (arr) {
 }
 
 
+theBigButton.addEventListener('click', () => addNewList())
 
-// listData.length > 0 ? showLists(listData) : showLists(testData)
+theInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        addNewList()
+    }
+})
+
+orderOptions.addEventListener('change', () => {
+    let order = orderOptions.value
+    let listData = getListData()
+
+    switch (order) {
+        case ORDER_BY_NAME:
+            listData.sort((a, b) => {
+                return a.title > b.title ? 1 : -1
+            })
+            break;
+        case ORDER_BY_TIME:
+            listData.sort((a, b) => {
+                return a.timeStamp - b.timeStamp
+            })
+            break;
+        default:
+            console.error('DAFUQ!?!?!')
+            break;
+    }
+    showLists(listData)
+})
+
+deathButton.addEventListener('click', () => {
+    localStorage.removeItem('listData')
+    showLists(getListData())
+})
+
+searchInput.addEventListener('keyup', (e) => {
+    let searchTerm = searchInput.value
+
+    findMatches(listData, searchTerm)
+    
+    if(e.key === 'Backspace') {
+        findMatches(listData, searchTerm)
+    }
+})
+
 JSON.parse(localStorage.getItem('listData')).length > 0 ? showLists(JSON.parse(localStorage.getItem('listData'))) : showEmpty()
 
