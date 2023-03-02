@@ -407,7 +407,10 @@ function addItemToList (i, value) {
         checked: false,
         isEditing: false
     })
-    console.log(currentList)
+    // console.log(`~~~~~~`)
+    // console.log(listData)
+    // console.log(`~~~~~~`)
+    updateLocalStorage('listData', listData)
 }
 
 function handleEdit (event, i, divID, ele, arr, editType) {
