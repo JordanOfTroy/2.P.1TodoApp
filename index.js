@@ -131,18 +131,19 @@ function addNewList () {
     listData.push(currentListObject)
     updateLocalStorage('listData', listData)
 
-    showLists(getListData())
+    showLists()
 }
 
 function clearOldList () {
     theList.innerHTML = ''
 }
 
-function showLists (arr) {
+function showLists () {
     // console.log(arr)
     clearOldList()
-    arr.forEach((ele, i) => {
-        createListDiv(ele, i, arr)
+    let listData = Array.from(getListData())
+    listData.forEach((ele, i) => {
+        createListDiv(ele, i, listData)
     })
 }
 
@@ -184,7 +185,7 @@ function createListTitle (divID, i, ele, arr) {
                 element.title = newTitle
                 element.isEditing = false
                 updateLocalStorage('listData', listData)
-                showLists(getListData())
+                showLists()
             }
         })
     }
@@ -232,27 +233,27 @@ function createListTitle (divID, i, ele, arr) {
         switch (option) {
             case BLUE:
                 listData[i].bgColor = BLUE
-                showLists(listData)
+                showLists()
                 break;
             case PURPLE:
                 listData[i].bgColor = PURPLE
-                showLists(listData)
+                showLists()
                 break;
             case PINK:
                 listData[i].bgColor = PINK
-                showLists(listData)
+                showLists()
                 break;
             case ORANGE:
                 listData[i].bgColor = ORANGE
-                showLists(listData)
+                showLists()
                 break;
             case GREEN:
                 listData[i].bgColor = GREEN
-                showLists(listData)
+                showLists()
                 break;
             default:
                 listData[i].bgColor = null
-                showLists(listData)
+                showLists()
                 break;
         }
     }
@@ -296,7 +297,7 @@ function createListItems (ele, eleID, divID, arr) {
                     let newValue = itemName.value
                     item.item = newValue
                     item.isEditing = false
-                    showLists(getListData())
+                    showLists()
                 }
             })
         }
@@ -379,13 +380,13 @@ function addlistInputDiv (i, ele, eleID, divID) {
     button.addEventListener('click', (event) => {
         let addedItem = getInputValue(theInput)
         addItemToList(i, addedItem)
-        showLists(getListData())
+        showLists()
     })
     theInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
             let addedItem = getInputValue(theInput)
             addItemToList(i, addedItem)
-            showLists(getListData())
+            showLists()
         }
     })
     
@@ -425,7 +426,7 @@ function handleEdit (event, i, divID, ele, arr, editType) {
         // itemTobeEdited.isEditing = true
     }
 
-    showLists(getListData())
+    showLists()
 }
 
 
@@ -438,7 +439,7 @@ function handleDelete (event, i, divID, ele, arr, editType) {
         ele.items.splice(i, 1)
     }
     
-    showLists(listData)
+    showLists()
 }
 
 function handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) {
@@ -446,14 +447,14 @@ function handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) {
         let filteredItems = arr[i].items.filter(el => !el.checked)
         arr[i].items = filteredItems
     }
-    showLists(listData)
+    showLists()
 }
 
 function handleClearAllTasksFromList(e, i, divID, ele, arr, editType) {
     if (editType === 'list') {
         arr[i].items = []
     }
-    showLists(listData)
+    showLists()
 }
 
 function showEmpty () {
@@ -536,12 +537,12 @@ orderOptions.addEventListener('change', () => {
             console.error('DAFUQ!?!?!')
             break;
     }
-    showLists(listData)
+    showLists()
 })
 
 deathButton.addEventListener('click', () => {
     localStorage.removeItem('listData')
-    showLists(getListData())
+    showLists()
 })
 
 searchInput.addEventListener('keyup', (e) => {
@@ -554,5 +555,5 @@ searchInput.addEventListener('keyup', (e) => {
     }
 })
 
-JSON.parse(localStorage.getItem('listData')).length > 0 ? showLists(JSON.parse(localStorage.getItem('listData'))) : showEmpty()
+JSON.parse(localStorage.getItem('listData')).length > 0 ? showLists() : showEmpty()
 
