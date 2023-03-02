@@ -374,22 +374,13 @@ function addlistInputDiv (i, ele, eleID, divID) {
     button.setAttribute('id', `${buttonID}`)
     button.addEventListener('click', (event) => {
         let addedItem = getInputValue(theInput)
-        ele.items.push({
-            item: addedItem,
-            checked: false,
-            isEditing: false
-        })
-        showLists(listData)
+        addItemToList(i, addedItem)
+        showLists(getListData())
     })
     theInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
             let addedItem = getInputValue(theInput)
             addItemToList(i, addedItem)
-            // ele.items.push({
-            //     item: addedItem,
-            //     checked: false,
-            //     isEditing: false
-            // })
             showLists(getListData())
         }
     })
@@ -407,9 +398,6 @@ function addItemToList (i, value) {
         checked: false,
         isEditing: false
     })
-    // console.log(`~~~~~~`)
-    // console.log(listData)
-    // console.log(`~~~~~~`)
     updateLocalStorage('listData', listData)
 }
 
