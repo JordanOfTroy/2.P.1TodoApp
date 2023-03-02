@@ -160,10 +160,13 @@ function createListDiv (ele, ind, arr) {
 }
 
 function createListTitle (divID, i, ele, arr) {
+    let listData = getListData()
+    let element = listData[i]
+    console.log(element)
    
     let titleRow = document.createElement('div')
     let rowID = `row_${i}`
-    let itemElement = !ele.isEditing ? 'h1' : 'input'
+    let itemElement = !element.isEditing ? 'h1' : 'input'
 
     let listTitle = document.createElement(`${itemElement}`)
     let eleTitle = ele.title
@@ -178,9 +181,10 @@ function createListTitle (divID, i, ele, arr) {
         listTitle.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 let newTitle = listTitle.value
-                ele.title = newTitle
-                ele.isEditing = false
-                showLists(listData)
+                element.title = newTitle
+                element.isEditing = false
+                updateLocalStorage('listData', listData)
+                showLists(getListData())
             }
         })
     }
@@ -292,7 +296,7 @@ function createListItems (ele, eleID, divID, arr) {
                     let newValue = itemName.value
                     item.item = newValue
                     item.isEditing = false
-                    showLists(listData)
+                    showLists(getListData())
                 }
             })
         }
@@ -404,14 +408,24 @@ function addItemToList (i, value) {
 function handleEdit (event, i, divID, ele, arr, editType) {
 
     if (editType === 'list') {
-        let listToBeEdited = ele
-        listToBeEdited.isEditing = true
+        let listData = getListData()
+        console.log(listData[i])
+        listData[i].isEditing = true
+        console.log(listData)
+        updateLocalStorage('listData',listData)
+        // let listToBeEdited = ele
+        // listToBeEdited.isEditing = true
     } else {
-        let itemTobeEdited = ele.items[i] 
-        itemTobeEdited.isEditing = true
+        let listData = getListData()
+        let ele = listData[i]
+        console.log(ele)
+        ele.items[i].isEditing = true
+        updateLocalStorage('listData', listData)
+        // let itemTobeEdited = ele.items[i] 
+        // itemTobeEdited.isEditing = true
     }
 
-    showLists(listData)
+    showLists(getListData())
 }
 
 
