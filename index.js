@@ -158,13 +158,33 @@ function deleteList (ind, parentEle) {
 
 function deleteFinishedItems (ind, parentEle) {
     let deleteFinishedTool = document.createElement('i')
-    deleteFinishedTool.setAttribute('class', 'fa-solid fa-circle-xmark fa-md utilButton mx-2')
+    deleteFinishedTool.setAttribute('class', 'fa-solid fa-circle-check fa-md utilButton mx-2')
     deleteFinishedTool.addEventListener('click', () => {
-        console.log(`you want to delete finished items from list ${ind}`)
-        // handleEdit()
+        let lists = getLists()
+        lists[ind].items.forEach((listItem, i) => {
+            if (listItem.isFinished) {
+                let filtered = lists[ind].items.filter(item => !item.isFinished)
+                lists[ind].items = filtered
+                updateLocalStorage('lists', lists)
+                showLists()
+            }
+        })
     })
     parentEle.appendChild(deleteFinishedTool)
     // console.log('deleting finished items')
+}
+
+function clearAllItemsFromList(ind, parentEle) {
+    let clearItemsTool = document.createElement('i')
+    clearItemsTool.setAttribute('class', 'fa-solid fa-circle-xmark fa-md utilButton mx-2')
+    clearItemsTool.addEventListener('click', () => {
+        let lists = getLists()
+        lists[ind].items = []
+        updateLocalStorage('lists', lists)
+        showLists()
+    })
+
+    parentEle.appendChild(clearItemsTool)
 }
 
 function editItemName(indObj, parentEle){
@@ -195,7 +215,20 @@ function deleteSingleItem(indObj, parentEle){
     parentEle.appendChild(deleteSingleTool)
 }
 
-function finishSingleItem(){}
+function finishSingleItem(indObj, parentEle){
+    let {listInd, itemInd} = indObj
+    let finishTool = document.createElement('i')
+    let lists = getLists()
+    let isFinished = lists[listInd].items[itemInd].isFinished
+    finishTool.setAttribute('class',`fa-${isFinished ? 'solid' : 'regular'} fa-square-check utilButton mx-2`)
+    finishTool.addEventListener('click', () => {
+        lists[listInd].items[itemInd].isFinished = isFinished ? false : true
+        updateLocalStorage('lists', lists)
+        showLists()
+    })
+
+    parentEle.appendChild(finishTool)
+}
 
 function createTools(ind, parentEle, callType) {
     let tools = document.createElement('div')
@@ -207,6 +240,7 @@ function createTools(ind, parentEle, callType) {
             editListName(ind, tools)
             deleteList(ind, tools)
             deleteFinishedItems(ind, tools)
+            clearAllItemsFromList(ind, tools)
             break;
         case 'forItem':
             editItemName(ind, tools)
