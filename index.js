@@ -163,7 +163,6 @@ function createListDiv (ele, ind, arr) {
 function createListTitle (divID, i, ele, arr) {
     let listData = getListData()
     let element = listData[i]
-    console.log(element)
    
     let titleRow = document.createElement('div')
     let rowID = `row_${i}`
@@ -308,7 +307,7 @@ function createListItems (ele, eleID, divID, arr) {
 
         document.getElementById(divID).appendChild(listItem)
         listItem.appendChild(itemName)
-        listItem.appendChild(createUtilities(i, 'md', divID, ele, arr, 'listUtils'))
+        listItem.appendChild(createUtilities(i, 'md', divID, ele, arr, 'listItemUtils'))
 
     })
 }
@@ -323,6 +322,7 @@ function createUtilities (i, size, divID, ele, arr, editType) {
     let editButtonID = `editButt_${i}`
     editButton.setAttribute('id', `${editButtonID}`)
     editButton.setAttribute('class', `fa-solid fa-pen-to-square fa-${size} utilButton mx-3`)
+    editButton.setAttribute('data-index', `${i}`)
     editButton.addEventListener('click', (e) => {
         
         handleEdit(e, i, divID, ele, arr, editType)
@@ -408,23 +408,42 @@ function addItemToList (i, value) {
 
 function handleEdit (event, i, divID, ele, arr, editType) {
 
+    let listData = getListData()
+
     if (editType === 'list') {
-        let listData = getListData()
-        console.log(listData[i])
         listData[i].isEditing = true
-        console.log(listData)
         updateLocalStorage('listData',listData)
         // let listToBeEdited = ele
         // listToBeEdited.isEditing = true
-    } else {
-        let listData = getListData()
-        let ele = listData[i]
-        console.log(ele)
+    } else if (editType === 'listItemUtils') {
+
+        console.dir(event.target.dataset.index)
+        let itemInd = event.target.dataset.index
+
+        console.log(ele.items[i].item)
         ele.items[i].isEditing = true
-        updateLocalStorage('listData', listData)
-        // let itemTobeEdited = ele.items[i] 
-        // itemTobeEdited.isEditing = true
+        updateLocalStorage('listData',listData)
     }
+
+    // if (editType === 'list') {
+    //     let listData = getListData()
+    //     listData[i].isEditing = true
+    //     updateLocalStorage('listData',listData)
+    //     // let listToBeEdited = ele
+    //     // listToBeEdited.isEditing = true
+    // } else {
+    //     let listData = getListData()
+    //     console.log(event.target)
+
+    //     let eleToEdit = ele.items[i]
+    //     console.log(eleToEdit)
+    //     eleToEdit.isEditing = true
+    //     console.log(eleToEdit)
+
+    //     updateLocalStorage('listData', listData)
+    //     // let itemTobeEdited = ele.items[i] 
+    //     // itemTobeEdited.isEditing = true
+    // }
 
     showLists()
 }
