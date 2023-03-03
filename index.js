@@ -149,11 +149,12 @@ function deleteList (ind, parentEle) {
     let deleteTool = document.createElement('i')
     deleteTool.setAttribute('class', 'fa-solid fa-trash fa-md utilButton mx-2')
     deleteTool.addEventListener('click', () => {
-        console.log(`you want to delete list ${ind}`)
-        // handleEdit()
+       let lists = getLists()
+       lists.splice(ind, 1)
+       updateLocalStorage('lists', lists)
+       showLists()
     })
     parentEle.appendChild(deleteTool)
-    // console.log('deleting list')
 }
 
 function deleteFinishedItems (ind, parentEle) {
