@@ -73,11 +73,26 @@ function clearOldLists() {
 
 
 function createListName (str, ind, parentEle) {
-    let listName = document.createElement('h1')
+    let {isEditing, title} = getLists()[ind]
+    let listName = document.createElement(`${isEditing ? 'input' : 'h1'}`)
     let listNameID = `listHeader${ind}`
     listName.setAttribute('id', `${listNameID}`)
     listName.setAttribute('class', '')
     listName.innerText = `${str}`
+
+    if (isEditing) {
+        listName.setAttribute('value', `${title}`)
+        listName.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                let value = e.target.value
+                let lists = getLists()
+                lists[ind].title = value
+                lists[ind].isEditing = false
+                updateLocalStorage('lists', lists)
+                showLists()
+            }
+        })
+    }
 
     parentEle.appendChild(listName)
 }
@@ -87,7 +102,7 @@ function createColorSelect (ind, parentEle) {
     tool.setAttribute('class', 'colorSelect')
     
     let blankOpt = document.createElement('option')
-    blankOpt.setAttribute('value', null)
+    blankOpt.setAttribute('value', 'NOBGCOLOR')
     blankOpt.innerText = 'None'
     tool.appendChild(blankOpt)
     
@@ -100,11 +115,11 @@ function createColorSelect (ind, parentEle) {
     })
     
     tool.addEventListener('change', (e) => {
-        console.log(`you want to change list color ${ind}`)
         let lists = getLists()
         let newColor = e.target.value
         lists[ind].bgColor = newColor
         updateLocalStorage('lists', lists)
+        showLists()
         
     })
 
@@ -115,8 +130,10 @@ function editListName (ind, parentEle) {
     let tool = document.createElement('i')
     tool.setAttribute('class', 'fa-solid fa-pen-to-square fa-md utilButton mx-3')
     tool.addEventListener('click', () => {
-        console.log(`you want to edit list ${ind}`)
-        // handleEdit()
+        let lists = getLists()
+        lists[ind].isEditing = true
+        updateLocalStorage('lists', lists)
+        showLists()
     })
     parentEle.appendChild(tool)
 }
