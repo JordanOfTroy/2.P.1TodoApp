@@ -51,6 +51,13 @@ function listObj (str) {
     this.bgColor = null
 }
 
+function listItemObj (str, listIndex) {
+    this.title = str,
+    this.isEditing = false,
+    this.listIndex = listIndex,
+    this.isFinished = false
+}
+
 function setInitialListDataToLocalStorage () {
     window.localStorage.setItem('lists', JSON.stringify([]))
 }
@@ -98,23 +105,23 @@ function createListName (str, ind, parentEle) {
 }
 
 function createColorSelect (ind, parentEle) {
-    let tool = document.createElement('select')
-    tool.setAttribute('class', 'colorSelect')
+    let colorTool = document.createElement('select')
+    colorTool.setAttribute('class', 'colorSelect')
     
     let blankOpt = document.createElement('option')
     blankOpt.setAttribute('value', 'NOBGCOLOR')
     blankOpt.innerText = 'None'
-    tool.appendChild(blankOpt)
+    colorTool.appendChild(blankOpt)
     
     COLOR_OPTIONS.forEach((colorOpt) => {
         let {value, text} = colorOpt
         let option = document.createElement('option')
         option.setAttribute('value', `${value}`)
         option.innerText = text
-        tool.appendChild(option)
+        colorTool.appendChild(option)
     })
     
-    tool.addEventListener('change', (e) => {
+    colorTool.addEventListener('change', (e) => {
         let lists = getLists()
         let newColor = e.target.value
         lists[ind].bgColor = newColor
@@ -123,40 +130,40 @@ function createColorSelect (ind, parentEle) {
         
     })
 
-    parentEle.appendChild(tool)
+    parentEle.appendChild(colorTool)
 }
 
 function editListName (ind, parentEle) {
-    let tool = document.createElement('i')
-    tool.setAttribute('class', 'fa-solid fa-pen-to-square fa-md utilButton mx-3')
-    tool.addEventListener('click', () => {
+    let editTool = document.createElement('i')
+    editTool.setAttribute('class', 'fa-solid fa-pen-to-square fa-md utilButton mx-2')
+    editTool.addEventListener('click', () => {
         let lists = getLists()
         lists[ind].isEditing = true
         updateLocalStorage('lists', lists)
         showLists()
     })
-    parentEle.appendChild(tool)
+    parentEle.appendChild(editTool)
 }
 
 function deleteList (ind, parentEle) {
-    let tool = document.createElement('i')
-    tool.setAttribute('class', 'fa-solid fa-trash fa-md utilButton mx-3')
-    tool.addEventListener('click', () => {
+    let deleteTool = document.createElement('i')
+    deleteTool.setAttribute('class', 'fa-solid fa-trash fa-md utilButton mx-2')
+    deleteTool.addEventListener('click', () => {
         console.log(`you want to delete list ${ind}`)
         // handleEdit()
     })
-    parentEle.appendChild(tool)
+    parentEle.appendChild(deleteTool)
     // console.log('deleting list')
 }
 
 function deleteFinishedItems (ind, parentEle) {
-    let tool = document.createElement('i')
-    tool.setAttribute('class', 'fa-solid fa-circle-xmark fa-md utilButton mx-3')
-    tool.addEventListener('click', () => {
+    let deleteFinishedTool = document.createElement('i')
+    deleteFinishedTool.setAttribute('class', 'fa-solid fa-circle-xmark fa-md utilButton mx-2')
+    deleteFinishedTool.addEventListener('click', () => {
         console.log(`you want to delete finished items from list ${ind}`)
         // handleEdit()
     })
-    parentEle.appendChild(tool)
+    parentEle.appendChild(deleteFinishedTool)
     // console.log('deleting finished items')
 }
 
@@ -180,18 +187,31 @@ function createTools(ind, parentEle, callType) {
     parentEle.appendChild(tools)
 }
 
+function createNewItemInput (index, parentEle) {
+
+    //create input element
+
+    //add event listener that will call:
+    //-createTools w/ type forItem
+    //-addItemToList - using list item constructor
+
+}
+
 function createListHeader (str, ind, parentEle) {
     let listHeader = document.createElement('div')
     listHeader.setAttribute('class', 'listHeader')
 
     createListName(str, ind, listHeader)
     createTools(ind, listHeader, 'forList')
+    createNewItemInput(ind, listHeader)
 
     parentEle.appendChild(listHeader)
 }
 
-function createListItems (arr) {
-
+function createListItems (arr, listInd, parentEle) {
+    // arr.forEach((listItem, i) => {
+    //     let item = document.createElement('p')
+    // })
 }
 
 function createList (listObj, ind, listArr) {
@@ -203,7 +223,7 @@ function createList (listObj, ind, listArr) {
 
     createListHeader(title, ind, listCard)
 
-    items.length > 0 ?? createListItems(items)
+    items.length > 0 ?? createListItems(items, ind, listCard)
 
     theList.appendChild(listCard)
 }
@@ -231,6 +251,35 @@ newListInput.addEventListener('keyup', (e) => {
         newListInput.value = ''
         addNewListToLists(value)
     }
+})
+
+orderOptions.addEventListener('change', () => {
+    let order = orderOptions.value
+    let lists = getLists()
+
+    switch (order) {
+        case ORDER_BY_NAME:
+            lists.sort((a, b) => {
+                return a.title > b.title ? 1 : -1
+            })
+            break;
+        case ORDER_BY_TIME:
+            console.log('im owkring?')
+            lists.sort((a, b) => {
+                return a.timeStamp - b.timeStamp
+            })
+            break;
+        default:
+            console.error('DAFUQ!?!?!')
+            break;
+    }
+    updateLocalStorage('lists', lists)
+    showLists()
+})
+
+deathButton.addEventListener('click', () => {
+    localStorage.removeItem('lists')
+    showLists()
 })
 
 
