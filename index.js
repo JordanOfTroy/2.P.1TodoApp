@@ -20,7 +20,12 @@ const PURPLE = 'PURPLE'
 const PINK = 'PINK'
 const ORANGE = 'ORANGE'
 const GREEN = 'GREEN'
+const NONE = 'NONE'
 const COLOR_OPTIONS = [
+    {
+        value: NONE,
+        text: 'None'
+    },
     {
         value: BLUE,
         text: 'Blue'
@@ -108,10 +113,6 @@ function createColorSelect (ind, parentEle) {
     let colorTool = document.createElement('select')
     colorTool.setAttribute('class', 'colorSelect')
     
-    let blankOpt = document.createElement('option')
-    blankOpt.setAttribute('value', 'NOBGCOLOR')
-    blankOpt.innerText = 'None'
-    colorTool.appendChild(blankOpt)
     
     COLOR_OPTIONS.forEach((colorOpt) => {
         let {value, text} = colorOpt
@@ -287,6 +288,7 @@ function createListItems (arr, listInd, parentEle) {
         let {title, isEditing, isFinished, listIndex} = listItem
         let item = document.createElement('div')
         let itemName = document.createElement(`${isEditing ? 'input' : 'p'}`)
+        item.setAttribute('class', 'listItem')
         itemName.innerText = title
 
         if (isEditing) {
@@ -301,7 +303,7 @@ function createListItems (arr, listInd, parentEle) {
                     showLists()
                 }
             })
-        }
+        } 
 
         createTools({itemInd, listInd}, item, 'forItem')
 
@@ -341,6 +343,53 @@ function addNewListToLists (str) {
     showLists()
 }
 
+function getAllItems(arr) {
+    let allItems = []
+    for (let i = 0; i < arr.length; i++) {
+        let items = arr[i].items
+        for (let j = 0; j < items.length; j++) {
+            let item = items[j].title
+            allItems.push(item)
+        }
+    }
+    return allItems
+}
+
+function showMatches (arr) {
+    let divArr = Array.from(document.querySelectorAll('.listItem'))
+    console.log(divArr)
+    resultsDiv.innerHTML = ''
+
+    for (let i = 0; i < arr.length; i++) {
+
+        let item = document.createElement('a')
+        item.innerText = arr[i]
+
+        for (let j = 0; j < divArr.length; j++){
+            let content = divArr[j].innerText
+            let theID = divArr[j].id
+            if (arr[i] === content) {
+                item.setAttribute('href', `#${theID}`)
+            }
+        }
+        resultsDiv.appendChild(item)
+    }
+}
+
+function findMatches(str, arr) {
+    let items = getAllItems(arr)
+    let matches = []
+    if (str.length > 0) {
+       items.forEach((item, ind) => {
+        if (item.includes(str)) {
+            matches.push(item)
+        }
+       })
+    }
+
+    showMatches(matches)
+}
+
 newListInput.addEventListener('keyup', (e) => {
     if (e.key === 'Enter') {
         let value = e.target.value
@@ -376,6 +425,12 @@ orderOptions.addEventListener('change', () => {
 deathButton.addEventListener('click', () => {
     localStorage.removeItem('lists')
     showLists()
+})
+
+searchInput.addEventListener('keyup', (e) => {
+    let searchTerm = searchInput.value
+    let lists = Array.from(getLists())
+    findMatches(searchTerm, lists)
 })
 
 
