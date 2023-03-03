@@ -1,4 +1,11 @@
-let theInput = document.getElementById('todoInput')
+// let {
+//     createColorSelect,
+//     editListName,
+//     deleteList,
+//     deleteFinishedItems
+// }  = import('./helpers/toolHelpers.js')
+
+let newListInput = document.getElementById('todoInput')
 let theBigButton = document.getElementById('inputButton')
 let theList = document.getElementById('todoList')
 let searchInput = document.getElementById('taskSearch')
@@ -13,7 +20,12 @@ const PURPLE = 'PURPLE'
 const PINK = 'PINK'
 const ORANGE = 'ORANGE'
 const GREEN = 'GREEN'
+const NONE = 'NONE'
 const COLOR_OPTIONS = [
+    {
+        value: NONE,
+        text: 'None'
+    },
     {
         value: BLUE,
         text: 'Blue'
@@ -36,492 +48,316 @@ const COLOR_OPTIONS = [
     }
 ]
 
-let testData = [
-    {
-        title: "shopping",
-        items: [
-            {
-                item: 'millk',
-                checked: false,
-                isEditing: false
-            },
-            {
-                item: 'bread',
-                checked: false,
-                isEditing: false
-            },
-            {
-                item: 'eggs',
-                checked: false,
-                isEditing: false
-            },
-        ],
-        isEditing: false
-    },
-    {
-        title: "chores",
-        items: [
-            {
-                item: 'clean the gutters',
-                checked: false,
-                isEditing: false
-            },
-            {
-                item: 'mow the lawn',
-                checked: false,
-                isEditing: false
-            },
-            {
-                item: 'clean out the garage',
-                checked: false,
-                isEditing: false
-            },
-        ],
-        isEditing: false
-    },
-    {
-        title: "empty_list",
-        items: [],
-        isEditing: false
-    }
-]
-
-function listObj (str, arr = [], bool = false) {
+function listObj (str) {
     this.title = str,
-    this.items = arr,
-    this.isEditing = bool
+    this.items = []
+    this.isEditing = false
     this.timeStamp = new Date,
     this.bgColor = null
 }
 
-let listData = []
-
-function getInputValue (ele) {
-    let currentInputValue = ele.value
-    ele.value = ""
-    return currentInputValue
+function listItemObj (str, listIndex) {
+    this.title = str,
+    this.isEditing = false,
+    this.listIndex = listIndex,
+    this.isFinished = false
 }
 
-function createNewListObject (str) {
-    let newObj = new listObj(str)
-    return newObj
+function setInitialListDataToLocalStorage () {
+    window.localStorage.setItem('lists', JSON.stringify([]))
 }
 
+function getLists () {
+    return JSON.parse(localStorage.getItem('lists'))
+}
 
+function checkForListData () {
+    return localStorage.getItem('lists')
+}
 
-theBigButton.addEventListener('click', () => {
-    let currentListItem = getInputValue(theInput)
-    let currentListObject = createNewListObject(currentListItem)
-    listData.push(currentListObject)
-    showLists(listData)
-})
-theInput.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-        let currentListItem = getInputValue(theInput)
-        let currentListObject = createNewListObject(currentListItem)
-        listData.push(currentListObject)
-        showLists(listData)
-    }
-})
-orderOptions.addEventListener('change', () => {
-    let order = orderOptions.value
+function updateLocalStorage (str, arr) {
+    localStorage.setItem(str, JSON.stringify(arr))
+}
 
-    switch (order) {
-        case ORDER_BY_NAME:
-            listData.sort((a, b) => {
-                return a.title > b.title ? 1 : -1
-            })
-            break;
-        case ORDER_BY_TIME:
-            listData.sort((a, b) => {
-                return a.timeStamp - b.timeStamp
-            })
-            break;
-        default:
-            console.error('DAFUQ!?!?!')
-            break;
-    }
-    showLists(listData)
-})
-deathButton.addEventListener('click', () => {
-    listData = []
-    showLists(listData)
-})
-
-
-function clearOldList () {
+function clearOldLists() {
     theList.innerHTML = ''
 }
 
 
-function createListDiv (ele, ind, arr) {
-    let listTitleDiv = document.createElement("div")
-    let divID = `ListDiv_${ind}`
+function createListName (str, ind, parentEle) {
+    let {isEditing, title} = getLists()[ind]
+    let listName = document.createElement(`${isEditing ? 'input' : 'h1'}`)
+    let listNameID = `listHeader${ind}`
+    listName.setAttribute('id', `${listNameID}`)
+    listName.setAttribute('class', '')
+    listName.innerText = `${str}`
 
-    theList.appendChild(listTitleDiv)
-    listTitleDiv.setAttribute('id', divID)
-    listTitleDiv.setAttribute('class', `listCard ${ele.bgColor ? ele.bgColor : ''}`)
-
-    createListTitle(divID, ind, ele, arr)
-
-    return listTitleDiv
-}
-
-
-function createListTitle (divID, i, ele, arr) {
-   
-    let titleRow = document.createElement('div')
-    let rowID = `row_${i}`
-    let itemElement = !ele.isEditing ? 'h1' : 'input'
-
-    let listTitle = document.createElement(`${itemElement}`)
-    let eleTitle = ele.title
-    let eleID = `${eleTitle}_id${i}`
-
-    let colorOptions = document.createElement('select')
-
-
-    if (itemElement) {
-        listTitle.setAttribute('value', `${eleTitle}`)
-        listTitle.setAttribute('class', `edit_item_input`)
-        listTitle.addEventListener('keypress', (e) => {
+    if (isEditing) {
+        listName.setAttribute('value', `${title}`)
+        listName.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') {
-                let newTitle = listTitle.value
-                ele.title = newTitle
-                ele.isEditing = false
-                showLists(listData)
+                let value = e.target.value
+                let lists = getLists()
+                lists[ind].title = value
+                lists[ind].isEditing = false
+                updateLocalStorage('lists', lists)
+                showLists()
             }
         })
     }
 
-
-    titleRow.setAttribute('id', `${rowID}`)
-    titleRow.setAttribute('class', 'listHeader')
-
-    listTitle.innerText = eleTitle
-    listTitle.setAttribute('id', eleID)
-    listTitle.setAttribute('class', 'listTitle')
-    titleRow.appendChild(createUtilities(i, 'xl', divID, ele, arr, 'list'))
-
-    let toolsDiv = document.createElement('div')
-    let toolsDivID = `tools_${i}`
-    toolsDiv.setAttribute('id', `${toolsDivID}`)
-    toolsDiv.setAttribute('class','tools')
-    toolsDiv.appendChild(addlistInputDiv(i, ele, eleID, divID, 'list'))
-
-
-    colorOptions.addEventListener('change', (e) => {
-        updateListColor(e, i)
-    })
-
-    addColorOptions(colorOptions, COLOR_OPTIONS)
-    
-    function addColorOptions (ele, arr) {
-        let blank = document.createElement('option')
-        blank.setAttribute('value', 'none')
-        blank.innerText = '---'
-        ele.appendChild(blank)
-        for (let i = 0; i < arr.length; i++) {
-            let colorOption = document.createElement('option')
-            colorOption.setAttribute('value', `${arr[i].value}`)
-            colorOption.innerText = arr[i].text
-            ele.appendChild(colorOption)
-        }
-    }
-
-    function updateListColor(e, i) {
-        let option = e.target.value
-        // let parentList = e.target.parentNode.parentNode
-        // let parentObj = listData[i]
-
-        switch (option) {
-            case BLUE:
-                listData[i].bgColor = BLUE
-                showLists(listData)
-                break;
-            case PURPLE:
-                listData[i].bgColor = PURPLE
-                showLists(listData)
-                break;
-            case PINK:
-                listData[i].bgColor = PINK
-                showLists(listData)
-                break;
-            case ORANGE:
-                listData[i].bgColor = ORANGE
-                showLists(listData)
-                break;
-            case GREEN:
-                listData[i].bgColor = GREEN
-                showLists(listData)
-                break;
-            default:
-                listData[i].bgColor = null
-                showLists(listData)
-                break;
-        }
-    }
-
-    
-    document.getElementById(divID).appendChild(titleRow)
-    document.getElementById(rowID).appendChild(listTitle)
-    document.getElementById(divID).appendChild(toolsDiv)
-    document.getElementById(rowID).appendChild(colorOptions)
-    
-    createListItems(ele, eleID, divID, arr)
+    parentEle.appendChild(listName)
 }
 
-
-function createUtilities (i, size, divID, ele, arr, editType) {
-    let utilDiv = document.createElement('div')
-    let utilIdvID = `utils_${i}`
-    utilDiv.setAttribute('id', `${utilIdvID}`)
-    utilDiv.setAttribute('class','utils mx-3')
-
-    let editButton = document.createElement('i')
-    let editButtonID = `editButt_${i}`
-    editButton.setAttribute('id', `${editButtonID}`)
-    editButton.setAttribute('class', `fa-solid fa-pen-to-square fa-${size} utilButton mx-3`)
-    editButton.addEventListener('click', (e) => {
+function createColorSelect (ind, parentEle) {
+    let colorTool = document.createElement('select')
+    colorTool.setAttribute('class', 'colorSelect')
+    
+    
+    COLOR_OPTIONS.forEach((colorOpt) => {
+        let {value, text} = colorOpt
+        let option = document.createElement('option')
+        option.setAttribute('value', `${value}`)
+        option.innerText = text
+        colorTool.appendChild(option)
+    })
+    
+    colorTool.addEventListener('change', (e) => {
+        let lists = getLists()
+        let newColor = e.target.value
+        lists[ind].bgColor = newColor
+        updateLocalStorage('lists', lists)
+        showLists()
         
-        handleEdit(e, i, divID, ele, arr, editType)
     })
 
-    let deleteButton = document.createElement('i')
-    let deleteButtonID = `deleteButt_${i}`
-    deleteButton.setAttribute('id', `${deleteButtonID}`)
-    deleteButton.setAttribute('class', `fa-solid fa-trash fa-${size} utilButton mx-3`)
-    deleteButton.addEventListener('click', (e) => {
-        handleDelete(e, i, divID, ele, arr, editType)
+    parentEle.appendChild(colorTool)
+}
+
+function editListName (ind, parentEle) {
+    let editTool = document.createElement('i')
+    editTool.setAttribute('class', 'fa-solid fa-pen-to-square fa-md utilButton mx-2')
+    editTool.addEventListener('click', () => {
+        let lists = getLists()
+        lists[ind].isEditing = true
+        updateLocalStorage('lists', lists)
+        showLists()
     })
-
-    utilDiv.appendChild(editButton)
-    utilDiv.appendChild(deleteButton)
-
-    if (editType != 'listUtils') {
-
-        let clearCompletedTasksButton = document.createElement('i')
-        let clearCompletedTasksButtonID = `clearAllTasks_${i}`
-        clearCompletedTasksButton.setAttribute('id', `${clearCompletedTasksButtonID}`)
-        clearCompletedTasksButton.setAttribute('class', `fa-solid fa-circle-xmark fa-${size} utilButton mx-3`)
-        clearCompletedTasksButton.addEventListener('click', (e) => {
-           handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) 
-        })
-    
-        let clearAllTasksButton = document.createElement('i')
-        let clearAllTasksButtonID = `clearAllTasks_${i}`
-        clearAllTasksButton.setAttribute('id', `${clearAllTasksButtonID}`)
-        clearAllTasksButton.setAttribute('class', `fa-solid fa-explosion fa-${size} utilButton mx-3`)
-        clearAllTasksButton.addEventListener('click', (e) => {
-           handleClearAllTasksFromList(e, i, divID, ele, arr, editType) 
-        })
-
-        utilDiv.appendChild(clearCompletedTasksButton)
-        utilDiv.appendChild(clearAllTasksButton)
-    }
-    
-    return utilDiv
+    parentEle.appendChild(editTool)
 }
 
-
-function addlistInputDiv (i, ele, eleID, divID) {
-    let inputDiv = document.createElement('div')
-    let inputID = `inputDiv_${i}`
-    inputDiv.setAttribute('id', `${inputID}`)
-
-    let theInput = document.createElement('input')
-    theInput.setAttribute('placeholder', 'Add a new list item...')
-    theInput.setAttribute('class', 'my-3')
-
-    let button = document.createElement('button')
-    let buttonID = `button_${i}`
-    button.innerHTML = '<i class="fa-solid fa-plus"></i> Add'
-    button.setAttribute('id', `${buttonID}`)
-    button.addEventListener('click', (event) => {
-        let addedItem = getInputValue(theInput)
-        ele.items.push({
-            item: addedItem,
-            checked: false,
-            isEditing: false
-        })
-        showLists(listData)
+function deleteList (ind, parentEle) {
+    let deleteTool = document.createElement('i')
+    deleteTool.setAttribute('class', 'fa-solid fa-trash fa-md utilButton mx-2')
+    deleteTool.addEventListener('click', () => {
+       let lists = getLists()
+       lists.splice(ind, 1)
+       updateLocalStorage('lists', lists)
+       showLists()
     })
-    theInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            let addedItem = getInputValue(theInput)
-            ele.items.push({
-                item: addedItem,
-                checked: false,
-                isEditing: false
-            })
-            showLists(listData)
-        }
-    })
-    
-    inputDiv.appendChild(theInput)
-    inputDiv.appendChild(button)
-    return inputDiv
+    parentEle.appendChild(deleteTool)
 }
 
-
-
-function createListItems (ele, eleID, divID, arr) {
-    ele.items.forEach((item, i) => {
-        let itemElement = !item.isEditing ? 'p' : 'input'
-        let listItem = document.createElement("div")
-        let itemName = document.createElement(`${itemElement}`)
-
-        if (!item.isEditing) {
-            itemName.setAttribute('class', 'listName')
-            itemName.addEventListener('click', () => {
-                let status = item.checked
-                if (status === false) {
-                    itemName.classList.remove('text-decoration-none')
-                    itemName.classList.add('text-decoration-line-through')
-                    item.checked = true
-                } else if (status === true) {
-                    itemName.classList.remove('text-decoration-line-through')
-                    itemName.classList.add('text-decoration-none')
-                    item.checked = false
-                }
-            })
-        }
-
-        if (item.isEditing) {
-            itemName.setAttribute('value', `${item.item}`)
-            itemName.setAttribute('class', 'edit_item_input')
-            itemName.addEventListener('keypress', (e) => {
-                if(e.key === 'Enter') {
-                    let newValue = itemName.value
-                    item.item = newValue
-                    item.isEditing = false
-                    showLists(listData)
-                }
-            })
-        }
-
-        itemName.innerText = item.item
-        listItem.setAttribute('id', `${eleID}_item_id${i}`)
-        listItem.setAttribute('class', 'listItem')
-
-        document.getElementById(divID).appendChild(listItem)
-        listItem.appendChild(itemName)
-        listItem.appendChild(createUtilities(i, 'md', divID, ele, arr, 'listUtils'))
-
-    })
-}
-
-
-function handleEdit (event, i, divID, ele, arr, editType) {
-
-    if (editType === 'list') {
-        let listToBeEdited = ele
-        listToBeEdited.isEditing = true
-    } else {
-        let itemTobeEdited = ele.items[i] 
-        itemTobeEdited.isEditing = true
-    }
-
-    showLists(listData)
-}
-
-
-function handleDelete (event, i, divID, ele, arr, editType) {
-
-    if (editType === 'list') {
-        arr.splice(i, 1)
-    } else {
-        let itemToBeDeleted = ele.items[i]
-        ele.items.splice(i, 1)
-    }
-    
-    showLists(listData)
-}
-
-function handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) {
-    if (editType === 'list') {
-        let filteredItems = arr[i].items.filter(el => !el.checked)
-        arr[i].items = filteredItems
-    }
-    showLists(listData)
-}
-// function handleClearCompletedTasksFromList(e, i, divID, ele, arr, editType) {
-//     if (editType === 'list') {
-//         let listItems = arr[i].items
-//         for (let i = 0; i < listItems.length; i++) {
-//             if (listItems[i].checked) {
-//                 removeTheItem(i)
-//             }
-//         }
-
-//         function removeTheItem (i) {
-//             listItems.splice(i, 1)
-//         }
-//     }
-//     showLists(listData)
-// }
-
-function handleClearAllTasksFromList(e, i, divID, ele, arr, editType) {
-    if (editType === 'list') {
-        arr[i].items = []
-    }
-    showLists(listData)
-}
-
-function showLists (arr) {
-    clearOldList()
-    arr.forEach((ele, i) => {
-        createListDiv(ele, i, arr)
-    })
-}
-
-function showEmpty () {
-    let message = document.querySelector('#todoList')
-    let messageText = document.createElement('h1')
-    messageText.innerText = 'Please Create a List'
-    message.appendChild(messageText)
-}
-
-searchInput.addEventListener('keyup', (e) => {
-    let searchTerm = searchInput.value
-
-    findMatches(listData, searchTerm)
-    
-    if(e.key === 'Backspace') {
-        findMatches(listData, searchTerm)
-    }
-})
-
-
-function findMatches(arr, str) {
-    let items = getAllListItems(arr)
-    let matches = []
-    if (str.length > 0) {
-        for (let i in items) {
-            if (items[i].includes(str)) {
-                matches.push(items[i])
+function deleteFinishedItems (ind, parentEle) {
+    let deleteFinishedTool = document.createElement('i')
+    deleteFinishedTool.setAttribute('class', 'fa-solid fa-circle-check fa-md utilButton mx-2')
+    deleteFinishedTool.addEventListener('click', () => {
+        let lists = getLists()
+        lists[ind].items.forEach((listItem, i) => {
+            if (listItem.isFinished) {
+                let filtered = lists[ind].items.filter(item => !item.isFinished)
+                lists[ind].items = filtered
+                updateLocalStorage('lists', lists)
+                showLists()
             }
-        }
-    }
-    showMatches(matches)
+        })
+    })
+    parentEle.appendChild(deleteFinishedTool)
+    // console.log('deleting finished items')
 }
 
+function clearAllItemsFromList(ind, parentEle) {
+    let clearItemsTool = document.createElement('i')
+    clearItemsTool.setAttribute('class', 'fa-solid fa-circle-xmark fa-md utilButton mx-2')
+    clearItemsTool.addEventListener('click', () => {
+        let lists = getLists()
+        lists[ind].items = []
+        updateLocalStorage('lists', lists)
+        showLists()
+    })
 
-function getAllListItems (arr) {
-    let items = []
+    parentEle.appendChild(clearItemsTool)
+}
+
+function editItemName(indObj, parentEle){
+    let {listInd, itemInd} = indObj
+    let editItemTool = document.createElement('i')
+    editItemTool.setAttribute('class', 'fa-solid fa-pen-to-square fa-md utilButton mx-2')
+    editItemTool.addEventListener('click', () => {
+        let lists = getLists()
+        lists[listInd].items[itemInd].isEditing = true
+        updateLocalStorage('lists', lists)
+        showLists()
+    })
+
+    parentEle.appendChild(editItemTool)
+}
+
+function deleteSingleItem(indObj, parentEle){
+    let {listInd, itemInd} = indObj
+    let deleteSingleTool = document.createElement('i')
+    deleteSingleTool.setAttribute('class', 'fa-solid fa-trash fa-md utilButton mx-2')
+    deleteSingleTool.addEventListener('click', () => {
+        let lists = getLists()
+        lists[listInd].items.splice(itemInd, 1)
+        updateLocalStorage('lists', lists)
+        showLists()
+    })
+
+    parentEle.appendChild(deleteSingleTool)
+}
+
+function finishSingleItem(indObj, parentEle){
+    let {listInd, itemInd} = indObj
+    let finishTool = document.createElement('i')
+    let lists = getLists()
+    let isFinished = lists[listInd].items[itemInd].isFinished
+    finishTool.setAttribute('class',`fa-${isFinished ? 'solid' : 'regular'} fa-square-check utilButton mx-2`)
+    finishTool.addEventListener('click', () => {
+        lists[listInd].items[itemInd].isFinished = isFinished ? false : true
+        updateLocalStorage('lists', lists)
+        showLists()
+    })
+
+    parentEle.appendChild(finishTool)
+}
+
+function createTools(ind, parentEle, callType) {
+    let tools = document.createElement('div')
+    tools.setAttribute('class', 'tools')
+
+    switch (callType) {
+        case 'forList':
+            createColorSelect(ind, tools)
+            editListName(ind, tools)
+            deleteList(ind, tools)
+            deleteFinishedItems(ind, tools)
+            clearAllItemsFromList(ind, tools)
+            break;
+        case 'forItem':
+            editItemName(ind, tools)
+            deleteSingleItem(ind, tools)
+            finishSingleItem(ind, tools)
+            break;
+        default:
+            break;
+    }
+
+    parentEle.appendChild(tools)
+}
+
+function createNewItemInput (index, parentEle) {
+    let newItemInput = document.createElement('input')
+    newItemInput.setAttribute('placeholder', 'Add a new list item...')
+    newItemInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+            let lists = getLists()
+            let value = e.target.value
+            let newItem = new listItemObj(value, index)
+            lists[index].items.push(newItem)
+            updateLocalStorage('lists', lists)
+            showLists()
+        }
+    })
+    parentEle.appendChild(newItemInput)
+}
+
+function createListHeader (str, ind, parentEle) {
+    let listHeader = document.createElement('div')
+    listHeader.setAttribute('class', 'listHeader')
+
+    createListName(str, ind, listHeader)
+    createTools(ind, listHeader, 'forList')
+    createNewItemInput(ind, listHeader)
+
+    parentEle.appendChild(listHeader)
+}
+
+function createListItems (arr, listInd, parentEle) {
+    arr.forEach((listItem, itemInd) => {
+        let {title, isEditing, isFinished, listIndex} = listItem
+        let item = document.createElement('div')
+        let itemName = document.createElement(`${isEditing ? 'input' : 'p'}`)
+        item.setAttribute('class', 'listItem')
+        itemName.innerText = title
+
+        if (isEditing) {
+            itemName.setAttribute('value', `${title}`)
+            itemName.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    let value = e.target.value
+                    let lists = getLists()
+                    lists[listInd].items[itemInd].title = value
+                    lists[listInd].items[itemInd].isEditing = false
+                    updateLocalStorage('lists', lists)
+                    showLists()
+                }
+            })
+        } 
+
+        createTools({itemInd, listInd}, item, 'forItem')
+
+        item.appendChild(itemName)
+        parentEle.appendChild(item)
+    })
+}
+
+function createList (listObj, ind, listArr) {
+    let {title, items, bgColor} = listObj
+    let listCard = document.createElement('div')
+    let listCardID = `list${ind}_${title}`
+    listCard.setAttribute('id', `${listCardID}`)
+    listCard.setAttribute('class', `listCard ${bgColor ? bgColor : ''}`)
+
+    createListHeader(title, ind, listCard)
+
+    items.length > 0 ? createListItems(items, ind, listCard) : console.log('no items')
+
+    theList.appendChild(listCard)
+}
+
+function showLists () {
+    clearOldLists()
+    let lists = Array.from(getLists())
+    lists.forEach((list, ind, listArr) => {
+        createList(list, ind, listArr)
+    })
+}
+
+function addNewListToLists (str) {
+    checkForListData() ?? setInitialListDataToLocalStorage()
+    let lists = Array.from(getLists())
+    let newList = new listObj(str)
+    lists.push(newList)
+    updateLocalStorage('lists', lists)
+    showLists()
+}
+
+function getAllItems(arr) {
+    let allItems = []
     for (let i = 0; i < arr.length; i++) {
-        let itemsArr = arr[i].items
-        for (let j = 0; j < itemsArr.length; j++) {
-            let item = itemsArr[j].item
-            items.push(item)
+        let items = arr[i].items
+        for (let j = 0; j < items.length; j++) {
+            let item = items[j].title
+            allItems.push(item)
         }
     }
-    return items
+    return allItems
 }
-
 
 function showMatches (arr) {
     let divArr = Array.from(document.querySelectorAll('.listItem'))
+    console.log(divArr)
     resultsDiv.innerHTML = ''
 
     for (let i = 0; i < arr.length; i++) {
@@ -540,8 +376,64 @@ function showMatches (arr) {
     }
 }
 
+function findMatches(str, arr) {
+    let items = getAllItems(arr)
+    let matches = []
+    if (str.length > 0) {
+       items.forEach((item, ind) => {
+        if (item.includes(str)) {
+            matches.push(item)
+        }
+       })
+    }
+
+    showMatches(matches)
+}
+
+newListInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') {
+        let value = e.target.value
+        newListInput.value = ''
+        addNewListToLists(value)
+    }
+})
+
+orderOptions.addEventListener('change', () => {
+    let order = orderOptions.value
+    let lists = getLists()
+
+    switch (order) {
+        case ORDER_BY_NAME:
+            lists.sort((a, b) => {
+                return a.title > b.title ? 1 : -1
+            })
+            break;
+        case ORDER_BY_TIME:
+            console.log('im working?')
+            lists.sort((a, b) => {
+                return a.timeStamp - b.timeStamp
+            })
+            break;
+        default:
+            console.error('DAFUQ!?!?!')
+            break;
+    }
+    updateLocalStorage('lists', lists)
+    showLists()
+})
+
+deathButton.addEventListener('click', () => {
+    localStorage.removeItem('lists')
+    showLists()
+})
+
+searchInput.addEventListener('keyup', (e) => {
+    let searchTerm = searchInput.value
+    let lists = Array.from(getLists())
+    findMatches(searchTerm, lists)
+})
 
 
-// listData.length > 0 ? showLists(listData) : showLists(testData)
-listData.length > 0 ? showLists(listData) : showEmpty()
 
+// JSON.parse(localStorage.getItem('listData')).length > 0 ? showLists() : showEmpty()
+showLists()
