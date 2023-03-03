@@ -167,6 +167,24 @@ function deleteFinishedItems (ind, parentEle) {
     // console.log('deleting finished items')
 }
 
+function editItemName(indObj, parentEle){
+    let {listInd, itemInd} = indObj
+    let editItemTool = document.createElement('i')
+    editItemTool.setAttribute('class', 'fa-solid fa-pen-to-square fa-md utilButton mx-2')
+    editItemTool.addEventListener('click', (e) => {
+        let lists = getLists()
+        lists[listInd].items[itemInd].isEditing = true
+        updateLocalStorage('lists', lists)
+        showLists()
+    })
+
+    parentEle.appendChild(editItemTool)
+}
+
+function deleteSingleItem(){}
+
+function finishSingleItem(){}
+
 function createTools(ind, parentEle, callType) {
     let tools = document.createElement('div')
     tools.setAttribute('class', 'tools')
@@ -179,6 +197,9 @@ function createTools(ind, parentEle, callType) {
             deleteFinishedItems(ind, tools)
             break;
         case 'forItem':
+            editItemName(ind, tools)
+            deleteSingleItem(ind, tools)
+            finishSingleItem(ind, tools)
             break;
         default:
             break;
@@ -188,13 +209,19 @@ function createTools(ind, parentEle, callType) {
 }
 
 function createNewItemInput (index, parentEle) {
-
-    //create input element
-
-    //add event listener that will call:
-    //-createTools w/ type forItem
-    //-addItemToList - using list item constructor
-
+    let newItemInput = document.createElement('input')
+    newItemInput.setAttribute('placeholder', 'Add a new list item...')
+    newItemInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+            let lists = getLists()
+            let value = e.target.value
+            let newItem = new listItemObj(value, index)
+            lists[index].items.push(newItem)
+            updateLocalStorage('lists', lists)
+            showLists()
+        }
+    })
+    parentEle.appendChild(newItemInput)
 }
 
 function createListHeader (str, ind, parentEle) {
@@ -209,9 +236,31 @@ function createListHeader (str, ind, parentEle) {
 }
 
 function createListItems (arr, listInd, parentEle) {
-    // arr.forEach((listItem, i) => {
-    //     let item = document.createElement('p')
-    // })
+    arr.forEach((listItem, itemInd) => {
+        let {title, isEditing, isFinished, listIndex} = listItem
+        let item = document.createElement('div')
+        let itemName = document.createElement(`${isEditing ? 'input' : 'p'}`)
+        itemName.innerText = title
+
+        if (isEditing) {
+            itemName.setAttribute('value', `${title}`)
+            itemName.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    let value = e.target.value
+                    let lists = getLists()
+                    lists[listInd].items[itemInd].title = value
+                    lists[listInd].items[itemInd].isEditing = false
+                    updateLocalStorage('lists', lists)
+                    showLists()
+                }
+            })
+        }
+
+        createTools({itemInd, listInd}, item, 'forItem')
+
+        item.appendChild(itemName)
+        parentEle.appendChild(item)
+    })
 }
 
 function createList (listObj, ind, listArr) {
@@ -223,7 +272,7 @@ function createList (listObj, ind, listArr) {
 
     createListHeader(title, ind, listCard)
 
-    items.length > 0 ?? createListItems(items, ind, listCard)
+    items.length > 0 ? createListItems(items, ind, listCard) : console.log('no items')
 
     theList.appendChild(listCard)
 }
@@ -264,7 +313,7 @@ orderOptions.addEventListener('change', () => {
             })
             break;
         case ORDER_BY_TIME:
-            console.log('im owkring?')
+            console.log('im working?')
             lists.sort((a, b) => {
                 return a.timeStamp - b.timeStamp
             })
