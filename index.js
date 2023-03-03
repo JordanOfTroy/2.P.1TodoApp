@@ -171,7 +171,7 @@ function editItemName(indObj, parentEle){
     let {listInd, itemInd} = indObj
     let editItemTool = document.createElement('i')
     editItemTool.setAttribute('class', 'fa-solid fa-pen-to-square fa-md utilButton mx-2')
-    editItemTool.addEventListener('click', (e) => {
+    editItemTool.addEventListener('click', () => {
         let lists = getLists()
         lists[listInd].items[itemInd].isEditing = true
         updateLocalStorage('lists', lists)
@@ -181,7 +181,19 @@ function editItemName(indObj, parentEle){
     parentEle.appendChild(editItemTool)
 }
 
-function deleteSingleItem(){}
+function deleteSingleItem(indObj, parentEle){
+    let {listInd, itemInd} = indObj
+    let deleteSingleTool = document.createElement('i')
+    deleteSingleTool.setAttribute('class', 'fa-solid fa-trash fa-md utilButton mx-2')
+    deleteSingleTool.addEventListener('click', () => {
+        let lists = getLists()
+        lists[listInd].items.splice(itemInd, 1)
+        updateLocalStorage('lists', lists)
+        showLists()
+    })
+
+    parentEle.appendChild(deleteSingleTool)
+}
 
 function finishSingleItem(){}
 
