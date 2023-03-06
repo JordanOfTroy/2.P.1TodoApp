@@ -125,7 +125,7 @@ function createColorSelect (ind, parentEle) {
         if (value == lists[ind].bgColor){
             option.selected = true
         }
-        
+
         colorTool.appendChild(option)
     })
     
@@ -295,6 +295,8 @@ function createListItems (arr, listInd, parentEle) {
         let itemName = document.createElement(`${isEditing ? 'input' : 'p'}`)
         item.setAttribute('class', 'listItem')
         itemName.innerText = title
+
+        isFinished ? item.style.textDecoration = 'line-through' : item.style.textDecoration = 'none'
 
         if (isEditing) {
             itemName.setAttribute('value', `${title}`)
