@@ -293,6 +293,7 @@ function createListItems (arr, listInd, parentEle) {
         let {title, isEditing, isFinished, listIndex} = listItem
         let item = document.createElement('div')
         let itemName = document.createElement(`${isEditing ? 'input' : 'p'}`)
+        item.setAttribute('id', `randoID_${Math.floor(Math.random()*1000000) + 1}`)
         item.setAttribute('class', 'listItem')
         itemName.innerText = title
 
@@ -364,7 +365,6 @@ function getAllItems(arr) {
 
 function showMatches (arr) {
     let divArr = Array.from(document.querySelectorAll('.listItem'))
-    console.log(divArr)
     resultsDiv.innerHTML = ''
 
     for (let i = 0; i < arr.length; i++) {
@@ -416,9 +416,8 @@ orderOptions.addEventListener('change', () => {
             })
             break;
         case ORDER_BY_TIME:
-            console.log('im working?')
             lists.sort((a, b) => {
-                return a.timeStamp - b.timeStamp
+                return a.timeStamp - b.timeStamp ? 1 : -1
             })
             break;
         default:
