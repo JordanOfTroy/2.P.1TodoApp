@@ -110,8 +110,10 @@ function createListName (str, ind, parentEle) {
 }
 
 function createColorSelect (ind, parentEle) {
+    let lists = getLists()
     let colorTool = document.createElement('select')
     colorTool.setAttribute('class', 'colorSelect')
+ 
     
     
     COLOR_OPTIONS.forEach((colorOpt) => {
@@ -119,11 +121,15 @@ function createColorSelect (ind, parentEle) {
         let option = document.createElement('option')
         option.setAttribute('value', `${value}`)
         option.innerText = text
+
+        if (value == lists[ind].bgColor){
+            option.selected = true
+        }
+        
         colorTool.appendChild(option)
     })
     
     colorTool.addEventListener('change', (e) => {
-        let lists = getLists()
         let newColor = e.target.value
         lists[ind].bgColor = newColor
         updateLocalStorage('lists', lists)
@@ -173,7 +179,6 @@ function deleteFinishedItems (ind, parentEle) {
         })
     })
     parentEle.appendChild(deleteFinishedTool)
-    // console.log('deleting finished items')
 }
 
 function clearAllItemsFromList(ind, parentEle) {

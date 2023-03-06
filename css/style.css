@@ -19,9 +19,8 @@ body {
 }
 .listCard .listHeader {
   display: flex;
-  flex-direction: row-reverse;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-evenly;
 }
 .listCard .listItem {
   display: flex;
