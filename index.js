@@ -408,7 +408,7 @@ newListInput.addEventListener('keyup', (e) => {
 orderOptions.addEventListener('change', () => {
     let order = orderOptions.value
     let lists = getLists()
-
+    console.log(order)
     switch (order) {
         case ORDER_BY_NAME:
             lists.sort((a, b) => {
@@ -417,7 +417,7 @@ orderOptions.addEventListener('change', () => {
             break;
         case ORDER_BY_TIME:
             lists.sort((a, b) => {
-                return a.timeStamp - b.timeStamp ? 1 : -1
+                return b.timeStamp - a.timeStamp ? 1 : -1
             })
             break;
         default:
@@ -441,5 +441,4 @@ searchInput.addEventListener('keyup', (e) => {
 
 
 
-// JSON.parse(localStorage.getItem('listData')).length > 0 ? showLists() : showEmpty()
 showLists()
